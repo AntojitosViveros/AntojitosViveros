@@ -429,7 +429,7 @@ body {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 3rem 2rem;
+    padding: 1.5rem 1.5rem;
     border-radius: 20px;
     border: 1px solid var(--glass-border);
     max-width: 90%;
@@ -446,34 +446,34 @@ body {
 
 .landing-title {
     color: var(--primary-color);
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
 .landing-subtitle {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     color: #fff;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .landing-text {
     color: var(--text-muted);
-    margin-bottom: 2rem;
-    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
 }
 
 .btn-enter {
     background: var(--primary-color);
     color: #fff;
     border: none;
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.75rem;
     border-radius: 50px;
     font-family: inherit;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
@@ -570,6 +570,17 @@ body {
 .btn-checkout:disabled {
     background: var(--border-color);
     cursor: not-allowed;
+}
+
+.option-qty-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface-color);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
 }
 
 /* Animations */

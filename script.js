@@ -139,7 +139,6 @@ const menuData = [
 let cart = [];
 let activeCategory = "Todas";
 let productBeingConfigured = null;
-let currentModalQuantity = 1;
 
 // Elementos del DOM
 const categoriesContainer = document.getElementById("categoriesContainer");
@@ -167,9 +166,6 @@ const exclusionsContainer = document.getElementById("exclusionsContainer");
 const exclusionsList = document.getElementById("exclusionsList");
 const confirmOptionBtn = document.getElementById("confirmOptionBtn");
 const optionsModalPrice = document.getElementById("optionsModalPrice");
-const modalQtyValue = document.getElementById("modalQtyValue");
-const modalQtyMinus = document.getElementById("modalQtyMinus");
-const modalQtyPlus = document.getElementById("modalQtyPlus");
 
 // Elementos Landing Screen
 const landingScreen = document.getElementById("landingScreen");
@@ -264,32 +260,60 @@ function renderMenu() {
 // Modal de Opciones
 function openOptionsModal(product) {
     productBeingConfigured = product;
-    currentModalQuantity = 1;
-    modalQtyValue.textContent = currentModalQuantity;
     
     optionsModalTitle.textContent = product.name;
     optionsModalDesc.textContent = product.optionsTitle;
     
-    // 1. Render Base Options (Radio)
+    // 1. Render Base Options (Cantidades Individuales)
     optionsList.innerHTML = '';
     product.options.forEach((opt, index) => {
-        const label = document.createElement('label');
-        label.className = 'option-label';
+        const row = document.createElement('div');
+        row.className = 'option-qty-row';
         
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'productOption';
-        input.value = opt.name;
-        input.dataset.price = opt.price;
-        if (index === 0) input.checked = true;
-        input.addEventListener('change', updateModalPrice);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = `${opt.name} ($${opt.price.toFixed(2)})`;
         
-        const span = document.createElement('span');
-        span.textContent = `${opt.name} ($${opt.price.toFixed(2)})`;
+        const qtyDiv = document.createElement('div');
+        qtyDiv.className = 'modal-quantity-selector';
+        qtyDiv.style.marginBottom = '0'; // override margin
         
-        label.appendChild(input);
-        label.appendChild(span);
-        optionsList.appendChild(label);
+        const minusBtn = document.createElement('button');
+        minusBtn.className = 'qty-btn';
+        minusBtn.textContent = '-';
+        
+        const qtySpan = document.createElement('span');
+        qtySpan.className = 'base-option-qty';
+        qtySpan.dataset.name = opt.name;
+        qtySpan.dataset.price = opt.price;
+        
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'qty-btn';
+        plusBtn.textContent = '+';
+        
+        let currentQty = index === 0 ? 1 : 0; // Por defecto 1 de la primera opción
+        qtySpan.textContent = currentQty;
+
+        minusBtn.addEventListener('click', () => {
+            if (currentQty > 0) {
+                currentQty--;
+                qtySpan.textContent = currentQty;
+                updateModalPrice();
+            }
+        });
+
+        plusBtn.addEventListener('click', () => {
+            currentQty++;
+            qtySpan.textContent = currentQty;
+            updateModalPrice();
+        });
+        
+        qtyDiv.appendChild(minusBtn);
+        qtyDiv.appendChild(qtySpan);
+        qtyDiv.appendChild(plusBtn);
+        
+        row.appendChild(nameSpan);
+        row.appendChild(qtyDiv);
+        optionsList.appendChild(row);
     });
 
     // 2. Render Extras (Checkboxes)
@@ -349,35 +373,53 @@ function openOptionsModal(product) {
 function updateModalPrice() {
     if (!productBeingConfigured) return;
 
-    let unitPrice = 0;
+    let totalBasePrice = 0;
+    let totalBaseQty = 0;
     
-    // Get base option price
-    const selectedBase = document.querySelector('input[name="productOption"]:checked');
-    if (selectedBase) {
-        unitPrice += parseFloat(selectedBase.dataset.price);
-    }
+    document.querySelectorAll('.base-option-qty').forEach(el => {
+        const qty = parseInt(el.textContent);
+        if (qty > 0) {
+            totalBaseQty += qty;
+            totalBasePrice += qty * parseFloat(el.dataset.price);
+        }
+    });
     
-    // Add extras
+    let extrasCostPerItem = 0;
     const selectedExtras = document.querySelectorAll('input[name="productExtra"]:checked');
     selectedExtras.forEach(extra => {
-        unitPrice += parseFloat(extra.dataset.price);
+        extrasCostPerItem += parseFloat(extra.dataset.price);
     });
 
-    const totalPrice = unitPrice * currentModalQuantity;
+    const totalPrice = totalBasePrice + (extrasCostPerItem * totalBaseQty);
     optionsModalPrice.textContent = `($${totalPrice.toFixed(2)})`;
 }
 
 function confirmOptionsAndAddToCart() {
     if (!productBeingConfigured) return;
     
-    const selectedBaseInput = document.querySelector('input[name="productOption"]:checked');
-    const baseOptionName = selectedBaseInput.value;
-    let unitPrice = parseFloat(selectedBaseInput.dataset.price);
+    let totalBaseQty = 0;
+    let totalBasePrice = 0;
+    const baseDetails = [];
     
+    document.querySelectorAll('.base-option-qty').forEach(el => {
+        const qty = parseInt(el.textContent);
+        if (qty > 0) {
+            totalBaseQty += qty;
+            totalBasePrice += qty * parseFloat(el.dataset.price);
+            baseDetails.push(`${qty}x ${el.dataset.name}`);
+        }
+    });
+
+    if (totalBaseQty === 0) {
+        alert("Selecciona al menos una opción para continuar.");
+        return;
+    }
+
+    let extrasCostPerItem = 0;
     const extras = [];
     document.querySelectorAll('input[name="productExtra"]:checked').forEach(el => {
         extras.push(el.value);
-        unitPrice += parseFloat(el.dataset.price);
+        extrasCostPerItem += parseFloat(el.dataset.price);
     });
 
     const exclusions = [];
@@ -385,8 +427,10 @@ function confirmOptionsAndAddToCart() {
         exclusions.push(el.value);
     });
     
+    const totalPriceForBundle = totalBasePrice + (extrasCostPerItem * totalBaseQty);
+    
     // Create detailed string for the cart UI
-    let detailsString = baseOptionName;
+    let detailsString = baseDetails.join(', ');
     if (extras.length > 0) detailsString += ` + ${extras.join(' + ')}`;
     if (exclusions.length > 0) detailsString += ` (${exclusions.join(', ')})`;
 
@@ -399,9 +443,9 @@ function confirmOptionsAndAddToCart() {
         productId: productBeingConfigured.id,
         name: productBeingConfigured.name,
         details: detailsString,
-        price: unitPrice,
+        price: totalPriceForBundle,
         image: productBeingConfigured.image,
-        quantity: currentModalQuantity
+        quantity: 1 // A complete bundle represents 1 quantity in cart
     };
 
     addToCart(cartItem);
@@ -566,20 +610,7 @@ function setupEventListeners() {
 
     confirmOptionBtn.addEventListener('click', confirmOptionsAndAddToCart);
 
-    // Quantity selector in modal
-    modalQtyMinus.addEventListener('click', () => {
-        if (currentModalQuantity > 1) {
-            currentModalQuantity--;
-            modalQtyValue.textContent = currentModalQuantity;
-            updateModalPrice();
-        }
-    });
-
-    modalQtyPlus.addEventListener('click', () => {
-        currentModalQuantity++;
-        modalQtyValue.textContent = currentModalQuantity;
-        updateModalPrice();
-    });
+    // Quantity selector in modal removed as it's now per-ingredient
 
     // Cerrar clickeando afuera (para ambos modales)
     cartModalOverlay.addEventListener('click', (e) => {
