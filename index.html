@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital</title>
+    <meta name="description" content="Menú digital interactivo. Realiza tu pedido y envíalo por WhatsApp.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+    <!-- Pantalla de Bienvenida (Landing Screen) -->
+    <div id="landingScreen" class="landing-screen">
+        <div class="landing-content">
+            <h1 class="landing-title">Antojitos Viveros</h1>
+            <p class="landing-subtitle">Gracias por tu preferencia durante estos 22 años.</p>
+            <p class="landing-text">El sabor de la tradición directamente a tu mesa.</p>
+            <button id="enterMenuBtn" class="btn-enter">Ver el Menú <i class="ph ph-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="logo">
+            <h1>Antojitos Viveros</h1>
+            <p>Menú Digital</p>
+        </div>
+        <button class="cart-trigger" id="cartTrigger">
+            <i class="ph ph-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </button>
+    </header>
+
+    <main class="container">
+        <div class="categories" id="categoriesContainer">
+            <!-- Categorías dinámicas -->
+        </div>
+
+        <section class="menu-grid" id="menuContainer">
+            <!-- Productos dinámicos -->
+        </section>
+    </main>
+
+    <!-- Modal de Opciones del Producto -->
+    <div class="cart-modal-overlay" id="optionsModalOverlay">
+        <div class="options-modal">
+            <header class="cart-header">
+                <h2 id="optionsModalTitle">Elige una opción</h2>
+                <button class="close-cart" id="closeOptions"><i class="ph ph-x"></i></button>
+            </header>
+            <div class="options-body">
+                <!-- Opciones Base (Radio) -->
+                <div id="baseOptionsContainer" class="options-section">
+                    <p id="optionsModalDesc" class="options-desc"></p>
+                    <div id="optionsList" class="options-list"></div>
+                </div>
+
+                <!-- Extras (Checkboxes con costo) -->
+                <div id="extrasContainer" class="options-section" style="display: none;">
+                    <p class="options-desc">Extras (con costo adicional):</p>
+                    <div id="extrasList" class="options-list"></div>
+                </div>
+
+                <!-- Exclusiones/Preferencias (Checkboxes sin costo) -->
+                <div id="exclusionsContainer" class="options-section" style="display: none;">
+                    <p class="options-desc">Preferencias (sin costo):</p>
+                    <div id="exclusionsList" class="options-list"></div>
+                </div>
+            </div>
+            <footer class="cart-footer">
+                <div class="modal-quantity-selector">
+                    <button class="qty-btn" id="modalQtyMinus">-</button>
+                    <span id="modalQtyValue">1</span>
+                    <button class="qty-btn" id="modalQtyPlus">+</button>
+                </div>
+                <button class="btn-checkout" id="confirmOptionBtn">
+                    Agregar <span id="optionsModalPrice"></span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div class="cart-modal-overlay" id="cartModalOverlay">
+        <aside class="cart-modal" id="cartModal">
+            <header class="cart-header">
+                <h2>Tu Pedido</h2>
+                <button class="close-cart" id="closeCart"><i class="ph ph-x"></i></button>
+            </header>
+            
+            <div class="cart-items" id="cartItemsContainer">
+                <!-- Items del carrito -->
+                <p class="empty-cart-msg">Tu carrito está vacío</p>
+            </div>
+
+            <footer class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotalValue">$0.00</span>
+                </div>
+                
+                <div class="checkout-form">
+                    <label for="customerName">Tu Nombre:</label>
+                    <input type="text" id="customerName" placeholder="Ej. Juan Pérez">
+                    
+                    <label for="customerAddress">Mesa / Dirección (Opcional):</label>
+                    <input type="text" id="customerAddress" placeholder="Ej. Mesa 4">
+                </div>
+
+                <button class="btn-checkout" id="checkoutBtn">
+                    <i class="ph ph-whatsapp-logo"></i> Enviar Pedido
+                </button>
+            </footer>
+        </aside>
+    </div>
+
+    </div> <!-- End of app-wrapper -->
+    <script src="script.js"></script>
+</body>
+</html>
