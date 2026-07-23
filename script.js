@@ -132,6 +132,35 @@ const menuData = [
             { name: "Picadillo de res", price: 18.00 }
         ],
         exclusions: ["Sin frijol", "Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
+    },
+    {
+        id: "platanos_fritos",
+        name: "Plátanos Fritos",
+        description: "Plátanos fritos calientitos. Se sirven con lechera, media crema y queso.",
+        price: 35.00,
+        category: "Postres",
+        image: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige cómo los quieres:",
+        options: [
+            { name: "Con lechera, crema y queso", price: 35.00 },
+            { name: "Solo lechera", price: 35.00 },
+            { name: "Solo crema y queso", price: 35.00 },
+            { name: "Sin acompañamiento", price: 35.00 }
+        ],
+        exclusions: ["Sin lechera", "Sin media crema", "Sin queso"]
+    },
+    {
+        id: "refrescos",
+        name: "Refresco",
+        description: "Coca-Cola 500ml de cristal (retornable). Bien fría para acompañar tu pedido.",
+        price: 25.00,
+        category: "Bebidas",
+        image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Selecciona:",
+        options: [
+            { name: "Coca-Cola 500ml cristal", price: 25.00 }
+        ],
+        exclusions: []
     }
 ];
 
