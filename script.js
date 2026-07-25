@@ -732,31 +732,31 @@ function generateWhatsAppLink() {
     const name = customerNameInput.value.trim();
     const paymentMethod = paymentMethodInput.value;
 
-    let message = `*NUEVO PEDIDO # ${orderNumber}*%0A`;
-    message += `------------------------%0A`;
+    let message = `*NUEVO PEDIDO #${orderNumber}*\n`;
+    message += `------------------------\n`;
     
-    if (name) message += `*Cliente:* ${name}%0A`;
-    message += `*Método de pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}%0A`;
+    if (name) message += `*Cliente:* ${name}\n`;
+    message += `*Método de pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}\n`;
     
-    message += `------------------------%0A`;
+    message += `------------------------\n`;
     
     let total = 0;
     cart.forEach(item => {
         const subtotal = item.price * item.quantity;
         total += subtotal;
-        message += `*${item.quantity}x ${item.name}* - $${subtotal.toFixed(2)}%0A`;
-        message += `   > ${item.details}%0A`;
+        message += `*${item.quantity}x ${item.name}* - $${subtotal.toFixed(2)}\n`;
+        message += `   > ${item.details}\n`;
     });
 
-    message += `------------------------%0A`;
+    message += `------------------------\n`;
     
     const globalSalsas = [];
     document.querySelectorAll('input[name="globalSalsa"]:checked').forEach(el => {
         globalSalsas.push(el.value);
     });
     if (globalSalsas.length > 0) {
-        message += `*Salsas para el pedido:* ${globalSalsas.join(', ')}%0A`;
-        message += `------------------------%0A`;
+        message += `*Salsas para el pedido:* ${globalSalsas.join(', ')}\n`;
+        message += `------------------------\n`;
     }
 
     message += `*TOTAL: $${total.toFixed(2)}*`;
@@ -765,7 +765,7 @@ function generateWhatsAppLink() {
     orderNumber++;
     localStorage.setItem('orderNumber', orderNumber);
 
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
 
