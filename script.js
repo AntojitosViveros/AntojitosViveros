@@ -284,6 +284,7 @@ function renderMenu() {
         img.src = item.image;
         img.alt = item.name;
         img.className = "item-img";
+        img.loading = "lazy";
 
         const contentDiv = document.createElement("div");
         contentDiv.className = "item-content";
