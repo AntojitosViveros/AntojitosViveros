@@ -434,7 +434,7 @@ body {
     z-index: 1000;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
     text-align: center;
     transition: opacity 0.6s ease, visibility 0.6s ease;
     overflow: hidden;
@@ -472,11 +472,10 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 1.8rem 1.8rem 2rem;
-    border-radius: 24px 24px 0 0;
+    border-radius: 24px;
     border: 1px solid rgba(245, 158, 11, 0.25);
-    border-bottom: none;
-    width: 100%;
-    max-width: 480px;
+    width: 90%;
+    max-width: 400px;
     box-shadow: 0 -10px 60px rgba(245, 158, 11, 0.1), 0 0 0 1px rgba(255,255,255,0.05) inset;
     animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     max-height: 90dvh;
@@ -662,4 +661,50 @@ body {
 
 .menu-item {
     animation: fadeIn 0.4s ease-out forwards;
+}
+
+.special-instructions-input {
+    width: 100%;
+    min-height: 80px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: vertical;
+    margin-top: 0.5rem;
+}
+
+.special-instructions-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.salsas-label {
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.global-salsas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--surface-color);
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.global-salsas label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.global-salsas input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    width: 16px;
+    height: 16px;
 }

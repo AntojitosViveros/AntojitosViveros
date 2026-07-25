@@ -3,56 +3,6 @@ const WHATSAPP_NUMBER = "522281616533"; // Número de Antojitos Viveros
 
 const menuData = [
     {
-        id: "tacos",
-        name: "Tacos",
-        description: "Deliciosos tacos recién hechos.",
-        price: 18.00,
-        category: "Tacos",
-        image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&q=80&w=800",
-        optionsTitle: "Elige tu ingrediente:",
-        options: [
-            { name: "Pastor", price: 18.00 },
-            { name: "Cabeza de cerdo", price: 18.00 },
-            { name: "Suadero de res", price: 20.00 }
-        ],
-        extras: [
-            { name: "Agregar Queso de hebra", price: 4.00 }
-        ],
-        exclusions: ["Sin cebolla", "Sin cilantro", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
-    },
-    {
-        id: "tacos_dorados",
-        name: "Orden Tacos Dorados",
-        description: "Orden de 3 tacos dorados crujientes con lechuga, crema y queso.",
-        price: 18.00,
-        category: "Tacos",
-        image: "https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?auto=format&fit=crop&q=80&w=800",
-        optionsTitle: "Elige el relleno:",
-        options: [
-            { name: "Pollo", price: 18.00 },
-            { name: "Papa", price: 18.00 },
-            { name: "Queso de hebra", price: 18.00 }
-        ],
-        exclusions: ["Sin lechuga", "Sin crema", "Sin queso", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
-    },
-    {
-        id: "tortas",
-        name: "Tortas",
-        description: "Tortas bien servidas en pan calientito.",
-        price: 50.00,
-        category: "Tortas",
-        image: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&q=80&w=800",
-        optionsTitle: "Elige el ingrediente principal:",
-        options: [
-            { name: "Pastor", price: 50.00 },
-            { name: "Suadero de res", price: 50.00 },
-            { name: "Cabeza de cerdo", price: 50.00 },
-            { name: "Pollo guisado", price: 50.00 },
-            { name: "Pollo hervido", price: 50.00 }
-        ],
-        exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin queso de hebra", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
-    },
-    {
         id: "empanadas",
         name: "Empanadas",
         description: "Empanadas crujientes (llevan lechuga, crema y queso).",
@@ -74,7 +24,25 @@ const menuData = [
             { name: "+ Ingrediente (Queso)", price: 4.00 },
             { name: "+ Ingrediente (Papa)", price: 4.00 }
         ],
-        exclusions: ["Sin lechuga", "Sin crema", "Sin queso", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
+        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso"]
+    },
+    {
+        id: "tacos",
+        name: "Tacos",
+        description: "Deliciosos tacos recién hechos.",
+        price: 18.00,
+        category: "Tacos",
+        image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige tu ingrediente:",
+        options: [
+            { name: "Pastor", price: 18.00 },
+            { name: "Cabeza de cerdo", price: 18.00 },
+            { name: "Suadero de res", price: 20.00 }
+        ],
+        extras: [
+            { name: "Agregar Queso de hebra", price: 4.00 }
+        ],
+        exclusions: ["Naturales", "Sin cebolla", "Sin cilantro"]
     },
     {
         id: "gorditas_picadas",
@@ -95,7 +63,7 @@ const menuData = [
             { name: "Agregar Pastor", price: 3.00 },
             { name: "Agregar Suadero de res", price: 3.00 }
         ],
-        exclusions: ["Sin cebolla", "Sin papa", "Sin queso rayado", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
+        exclusions: ["Naturales", "Sin cebolla", "Sin papa", "Sin queso rayado"]
     },
     {
         id: "gorditas_tapadas",
@@ -115,7 +83,7 @@ const menuData = [
             { name: "Agregar Suadero de res", price: 4.00 },
             { name: "Agregar Cabeza de cerdo", price: 4.00 }
         ],
-        exclusions: ["Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
+        exclusions: ["Naturales"]
     },
     {
         id: "tostadas",
@@ -131,7 +99,76 @@ const menuData = [
             { name: "Queso de hebra", price: 18.00 },
             { name: "Picadillo de res", price: 18.00 }
         ],
-        exclusions: ["Sin frijol", "Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso", "Salsa aparte (Roja)", "Salsa aparte (Chile seco)", "Salsa aparte (Verde)"]
+        exclusions: ["Naturales", "Sin frijol", "Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso"]
+    },
+    {
+        id: "tortas",
+        name: "Tortas",
+        description: "Tortas bien servidas en pan calientito.",
+        price: 50.00,
+        category: "Tortas",
+        image: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige el ingrediente principal:",
+        options: [
+            { name: "Pastor", price: 50.00 },
+            { name: "Suadero de res", price: 50.00 },
+            { name: "Cabeza de cerdo", price: 50.00 },
+            { name: "Pollo guisado", price: 50.00 },
+            { name: "Pollo hervido", price: 50.00 }
+        ],
+        exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin queso de hebra"]
+    },
+    {
+        id: "garnachas",
+        name: "Garnachas",
+        description: "Garnachas tradicionales con la salsa y carne de tu elección.",
+        price: 20.00,
+        category: "Garnachas",
+        image: "https://images.unsplash.com/photo-1643133277733-66a476f7f305?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige tu combinación:",
+        options: [
+            { name: "Salsa Roja con Suadero", price: 20.00 },
+            { name: "Salsa Roja con Cabeza de cerdo", price: 20.00 },
+            { name: "Chile Seco con Suadero", price: 20.00 },
+            { name: "Chile Seco con Cabeza de cerdo", price: 20.00 }
+        ],
+        exclusions: ["Naturales", "Sin cebolla"]
+    },
+    {
+        id: "quesadillas",
+        name: "Quesadillas",
+        description: "Deliciosas quesadillas con el guiso de tu preferencia.",
+        price: 22.00,
+        category: "Quesadillas",
+        image: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8dd?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige tu guiso:",
+        options: [
+            { name: "Suadero", price: 22.00 },
+            { name: "Pastor", price: 22.00 },
+            { name: "Cabeza", price: 22.00 },
+            { name: "Pollo hervido", price: 22.00 },
+            { name: "Pollo guisado", price: 22.00 },
+            { name: "Picadillo", price: 22.00 },
+            { name: "Champiñón", price: 22.00 },
+            { name: "Papa", price: 22.00 },
+            { name: "Chicharrón", price: 22.00 }
+        ],
+        exclusions: ["Naturales"]
+    },
+    {
+        id: "tacos_dorados",
+        name: "Orden Tacos Dorados",
+        description: "Orden de 3 tacos dorados crujientes con lechuga, crema y queso.",
+        price: 18.00,
+        category: "Tacos Dorados",
+        image: "https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?auto=format&fit=crop&q=80&w=800",
+        optionsTitle: "Elige el relleno:",
+        options: [
+            { name: "Pollo", price: 18.00 },
+            { name: "Papa", price: 18.00 },
+            { name: "Queso de hebra", price: 18.00 }
+        ],
+        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso"]
     },
     {
         id: "platanos_fritos",
@@ -292,10 +329,21 @@ function openOptionsModal(product) {
     
     optionsModalTitle.textContent = product.name;
     optionsModalDesc.textContent = product.optionsTitle;
+
     
-    // 1. Render Base Options (Cantidades Individuales)
+    // 1. Render Base Options (Cantidades Individuales) y sus Extras
     optionsList.innerHTML = '';
+    
+    // Ocultar el contenedor de extras global ya que ahora se mostrarán por sabor
+    if (extrasContainer) extrasContainer.style.display = 'none';
+
     product.options.forEach((opt, index) => {
+        const optionWrapper = document.createElement('div');
+        optionWrapper.className = 'option-wrapper';
+        optionWrapper.style.marginBottom = '12px';
+        optionWrapper.style.paddingBottom = '12px';
+        optionWrapper.style.borderBottom = '1px solid var(--border-light)';
+
         const row = document.createElement('div');
         row.className = 'option-qty-row';
         
@@ -304,7 +352,7 @@ function openOptionsModal(product) {
         
         const qtyDiv = document.createElement('div');
         qtyDiv.className = 'modal-quantity-selector';
-        qtyDiv.style.marginBottom = '0'; // override margin
+        qtyDiv.style.marginBottom = '0';
         
         const minusBtn = document.createElement('button');
         minusBtn.className = 'qty-btn';
@@ -319,13 +367,93 @@ function openOptionsModal(product) {
         plusBtn.className = 'qty-btn';
         plusBtn.textContent = '+';
         
-        let currentQty = index === 0 ? 1 : 0; // Por defecto 1 de la primera opción
+        let currentQty = 0;
         qtySpan.textContent = currentQty;
+
+        // Contenedor de extras para esta opción
+        const flavorExtrasContainer = document.createElement('div');
+        flavorExtrasContainer.className = 'flavor-extras';
+        flavorExtrasContainer.style.display = 'none';
+        flavorExtrasContainer.style.paddingLeft = '15px';
+        flavorExtrasContainer.style.marginTop = '8px';
+        
+        const flavorExtrasState = [];
+
+        if (product.extras && product.extras.length > 0) {
+            product.extras.forEach((extra) => {
+                const extraRow = document.createElement('div');
+                extraRow.className = 'option-qty-row';
+                extraRow.style.padding = '4px 0';
+                
+                const extraNameSpan = document.createElement('span');
+                extraNameSpan.textContent = `+ ${extra.name} (+$${extra.price.toFixed(2)})`;
+                extraNameSpan.style.color = 'var(--text-muted)';
+                extraNameSpan.style.fontSize = '0.9rem';
+                
+                const extraQtyDiv = document.createElement('div');
+                extraQtyDiv.className = 'modal-quantity-selector';
+                extraQtyDiv.style.marginBottom = '0';
+                extraQtyDiv.style.transform = 'scale(0.85)';
+                extraQtyDiv.style.transformOrigin = 'right center';
+                
+                const eMinusBtn = document.createElement('button');
+                eMinusBtn.className = 'qty-btn';
+                eMinusBtn.textContent = '-';
+                
+                const eQtySpan = document.createElement('span');
+                eQtySpan.className = 'flavor-extra-qty';
+                eQtySpan.dataset.name = extra.name;
+                eQtySpan.dataset.price = extra.price;
+                
+                const ePlusBtn = document.createElement('button');
+                ePlusBtn.className = 'qty-btn';
+                ePlusBtn.textContent = '+';
+                
+                let eCurrentQty = 0;
+                eQtySpan.textContent = eCurrentQty;
+
+                const stateObj = { setQty: (val) => { eCurrentQty = val; eQtySpan.textContent = val; }, getQty: () => eCurrentQty };
+                flavorExtrasState.push(stateObj);
+
+                eMinusBtn.addEventListener('click', () => {
+                    if (eCurrentQty > 0) {
+                        stateObj.setQty(eCurrentQty - 1);
+                        updateModalPrice();
+                    }
+                });
+
+                ePlusBtn.addEventListener('click', () => {
+                    if (eCurrentQty < currentQty) { // Limitar la cantidad de extra a la cantidad base
+                        stateObj.setQty(eCurrentQty + 1);
+                        updateModalPrice();
+                    }
+                });
+                
+                extraQtyDiv.appendChild(eMinusBtn);
+                extraQtyDiv.appendChild(eQtySpan);
+                extraQtyDiv.appendChild(ePlusBtn);
+                
+                extraRow.appendChild(extraNameSpan);
+                extraRow.appendChild(extraQtyDiv);
+                flavorExtrasContainer.appendChild(extraRow);
+            });
+        }
 
         minusBtn.addEventListener('click', () => {
             if (currentQty > 0) {
                 currentQty--;
                 qtySpan.textContent = currentQty;
+                
+                // Ajustar los extras si exceden la nueva cantidad base
+                flavorExtrasState.forEach(ex => {
+                    if (ex.getQty() > currentQty) {
+                        ex.setQty(currentQty);
+                    }
+                });
+                
+                if (currentQty === 0) {
+                    flavorExtrasContainer.style.display = 'none';
+                }
                 updateModalPrice();
             }
         });
@@ -333,6 +461,9 @@ function openOptionsModal(product) {
         plusBtn.addEventListener('click', () => {
             currentQty++;
             qtySpan.textContent = currentQty;
+            if (currentQty > 0 && product.extras && product.extras.length > 0) {
+                flavorExtrasContainer.style.display = 'block';
+            }
             updateModalPrice();
         });
         
@@ -342,34 +473,14 @@ function openOptionsModal(product) {
         
         row.appendChild(nameSpan);
         row.appendChild(qtyDiv);
-        optionsList.appendChild(row);
+        
+        optionWrapper.appendChild(row);
+        if (product.extras && product.extras.length > 0) {
+            optionWrapper.appendChild(flavorExtrasContainer);
+        }
+        
+        optionsList.appendChild(optionWrapper);
     });
-
-    // 2. Render Extras (Checkboxes)
-    if (product.extras && product.extras.length > 0) {
-        extrasContainer.style.display = 'block';
-        extrasList.innerHTML = '';
-        product.extras.forEach(extra => {
-            const label = document.createElement('label');
-            label.className = 'option-label';
-            
-            const input = document.createElement('input');
-            input.type = 'checkbox';
-            input.name = 'productExtra';
-            input.value = extra.name;
-            input.dataset.price = extra.price;
-            input.addEventListener('change', updateModalPrice);
-            
-            const span = document.createElement('span');
-            span.textContent = `${extra.name} (+$${extra.price.toFixed(2)})`;
-            
-            label.appendChild(input);
-            label.appendChild(span);
-            extrasList.appendChild(label);
-        });
-    } else {
-        extrasContainer.style.display = 'none';
-    }
 
     // 3. Render Exclusions (Checkboxes no cost)
     if (product.exclusions && product.exclusions.length > 0) {
@@ -413,13 +524,15 @@ function updateModalPrice() {
         }
     });
     
-    let extrasCostPerItem = 0;
-    const selectedExtras = document.querySelectorAll('input[name="productExtra"]:checked');
-    selectedExtras.forEach(extra => {
-        extrasCostPerItem += parseFloat(extra.dataset.price);
+    let totalExtrasPrice = 0;
+    document.querySelectorAll('.flavor-extra-qty').forEach(el => {
+        const qty = parseInt(el.textContent);
+        if (qty > 0) {
+            totalExtrasPrice += qty * parseFloat(el.dataset.price);
+        }
     });
 
-    const totalPrice = totalBasePrice + (extrasCostPerItem * totalBaseQty);
+    const totalPrice = totalBasePrice + totalExtrasPrice;
     optionsModalPrice.textContent = `($${totalPrice.toFixed(2)})`;
 }
 
@@ -430,12 +543,36 @@ function confirmOptionsAndAddToCart() {
     let totalBasePrice = 0;
     const baseDetails = [];
     
-    document.querySelectorAll('.base-option-qty').forEach(el => {
-        const qty = parseInt(el.textContent);
-        if (qty > 0) {
-            totalBaseQty += qty;
-            totalBasePrice += qty * parseFloat(el.dataset.price);
-            baseDetails.push(`${qty}x ${el.dataset.name}`);
+    let totalExtrasPrice = 0;
+    
+    // Process base options and their specific extras
+    document.querySelectorAll('.base-option-qty').forEach(baseEl => {
+        const baseQty = parseInt(baseEl.textContent);
+        if (baseQty > 0) {
+            totalBaseQty += baseQty;
+            totalBasePrice += baseQty * parseFloat(baseEl.dataset.price);
+            
+            const baseName = baseEl.dataset.name;
+            let itemDetail = `${baseQty}x ${baseName}`;
+            
+            const wrapper = baseEl.closest('.option-wrapper');
+            const flavorExtras = [];
+            
+            if (wrapper) {
+                wrapper.querySelectorAll('.flavor-extra-qty').forEach(extraEl => {
+                    const extraQty = parseInt(extraEl.textContent);
+                    if (extraQty > 0) {
+                        totalExtrasPrice += extraQty * parseFloat(extraEl.dataset.price);
+                        flavorExtras.push(`${extraQty} con ${extraEl.dataset.name}`);
+                    }
+                });
+            }
+            
+            if (flavorExtras.length > 0) {
+                itemDetail += ` [${flavorExtras.join(', ')}]`;
+            }
+            
+            baseDetails.push(itemDetail);
         }
     });
 
@@ -444,23 +581,15 @@ function confirmOptionsAndAddToCart() {
         return;
     }
 
-    let extrasCostPerItem = 0;
-    const extras = [];
-    document.querySelectorAll('input[name="productExtra"]:checked').forEach(el => {
-        extras.push(el.value);
-        extrasCostPerItem += parseFloat(el.dataset.price);
-    });
-
     const exclusions = [];
     document.querySelectorAll('input[name="productExclusion"]:checked').forEach(el => {
         exclusions.push(el.value);
     });
     
-    const totalPriceForBundle = totalBasePrice + (extrasCostPerItem * totalBaseQty);
+    const totalPriceForBundle = totalBasePrice + totalExtrasPrice;
     
     // Create detailed string for the cart UI
     let detailsString = baseDetails.join(', ');
-    if (extras.length > 0) detailsString += ` + ${extras.join(' + ')}`;
     if (exclusions.length > 0) detailsString += ` (${exclusions.join(', ')})`;
 
     // Create unique ID so identical configurations stack, but different ones don't
@@ -617,6 +746,16 @@ function generateWhatsAppLink() {
     });
 
     message += `------------------------%0A`;
+    
+    const globalSalsas = [];
+    document.querySelectorAll('input[name="globalSalsa"]:checked').forEach(el => {
+        globalSalsas.push(el.value);
+    });
+    if (globalSalsas.length > 0) {
+        message += `*Salsas para el pedido:* ${globalSalsas.join(', ')}%0A`;
+        message += `------------------------%0A`;
+    }
+
     message += `*TOTAL: $${total.toFixed(2)}*`;
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
