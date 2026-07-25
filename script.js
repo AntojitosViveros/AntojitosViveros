@@ -8,7 +8,7 @@ const menuData = [
         description: "Empanadas crujientes (llevan lechuga, crema y queso).",
         price: 18.00,
         category: "Empanadas",
-        image: "https://images.unsplash.com/photo-1628198622240-a309e3922c07?auto=format&fit=crop&q=80&w=800",
+        image: "empanada.png",
         optionsTitle: "Elige el relleno principal:",
         options: [
             { name: "Pollo guisado", price: 18.00 },
@@ -32,7 +32,7 @@ const menuData = [
         description: "Deliciosos tacos recién hechos.",
         price: 18.00,
         category: "Tacos",
-        image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&q=80&w=800",
+        image: "taco de pastor.png",
         optionsTitle: "Elige tu ingrediente:",
         options: [
             { name: "Pastor", price: 18.00 },
@@ -107,7 +107,7 @@ const menuData = [
         description: "Tortas bien servidas en pan calientito.",
         price: 50.00,
         category: "Tortas",
-        image: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&q=80&w=800",
+        image: "torta.png",
         optionsTitle: "Elige el ingrediente principal:",
         options: [
             { name: "Pastor", price: 50.00 },
@@ -124,7 +124,7 @@ const menuData = [
         description: "Garnachas tradicionales con la salsa y carne de tu elección.",
         price: 20.00,
         category: "Garnachas",
-        image: "https://images.unsplash.com/photo-1643133277733-66a476f7f305?auto=format&fit=crop&q=80&w=800",
+        image: "garnacha.png",
         optionsTitle: "Elige tu combinación:",
         options: [
             { name: "Salsa Roja con Suadero", price: 20.00 },
@@ -161,7 +161,7 @@ const menuData = [
         description: "Orden de 3 tacos dorados crujientes con lechuga, crema y queso.",
         price: 18.00,
         category: "Tacos Dorados",
-        image: "https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?auto=format&fit=crop&q=80&w=800",
+        image: "Taco dorado.png",
         optionsTitle: "Elige el relleno:",
         options: [
             { name: "Pollo", price: 18.00 },
@@ -202,6 +202,7 @@ const menuData = [
 ];
 
 // Estado de la aplicación
+let orderNumber = parseInt(localStorage.getItem('orderNumber')) || 1;
 let cart = [];
 let activeCategory = "Todas";
 let productBeingConfigured = null;
@@ -217,7 +218,8 @@ const cartItemsContainer = document.getElementById("cartItemsContainer");
 const cartTotalValue = document.getElementById("cartTotalValue");
 const checkoutBtn = document.getElementById("checkoutBtn");
 const customerNameInput = document.getElementById("customerName");
-const customerAddressInput = document.getElementById("customerAddress");
+const paymentMethodInput = document.getElementById("paymentMethod");
+const transferDetailsDiv = document.getElementById("transferDetails");
 
 // Elementos Modal Opciones
 const optionsModalOverlay = document.getElementById("optionsModalOverlay");
@@ -727,13 +729,13 @@ function generateWhatsAppLink() {
     if (cart.length === 0) return;
 
     const name = customerNameInput.value.trim();
-    const address = customerAddressInput.value.trim();
+    const paymentMethod = paymentMethodInput.value;
 
-    let message = `*NUEVO PEDIDO*%0A`;
+    let message = `*NUEVO PEDIDO # ${orderNumber}*%0A`;
     message += `------------------------%0A`;
     
     if (name) message += `*Cliente:* ${name}%0A`;
-    if (address) message += `*Mesa/Dirección:* ${address}%0A`;
+    message += `*Método de pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}%0A`;
     
     message += `------------------------%0A`;
     
@@ -758,12 +760,24 @@ function generateWhatsAppLink() {
 
     message += `*TOTAL: $${total.toFixed(2)}*`;
 
+    // Incrementar y guardar el número de pedido
+    orderNumber++;
+    localStorage.setItem('orderNumber', orderNumber);
+
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
     window.open(whatsappUrl, '_blank');
 }
 
 // Event Listeners
 function setupEventListeners() {
+    paymentMethodInput.addEventListener('change', (e) => {
+        if (e.target.value === 'transferencia') {
+            transferDetailsDiv.style.display = 'block';
+        } else {
+            transferDetailsDiv.style.display = 'none';
+        }
+    });
+
     cartTrigger.addEventListener('click', () => {
         cartModalOverlay.classList.add('active');
     });
