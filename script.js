@@ -732,34 +732,56 @@ function generateWhatsAppLink() {
     const name = customerNameInput.value.trim();
     const paymentMethod = paymentMethodInput.value;
 
-    let message = `*NUEVO PEDIDO #${orderNumber}*\n`;
-    message += `------------------------\n`;
-    
-    if (name) message += `*Cliente:* ${name}\n`;
-    message += `*Método de pago:* ${paymentMethod === 'efectivo' ? 'Efectivo' : 'Transferencia'}\n`;
-    
-    message += `------------------------\n`;
-    
+    let message = `🧾 *NUEVO PEDIDO #${orderNumber}*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+    if (name) message += `👤 *Cliente:* ${name}\n`;
+    message += `💳 *Pago:* ${paymentMethod === 'efectivo' ? '💵 Efectivo' : '🏦 Transferencia'}\n`;
+    message += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🛒 *LO QUE PIDIÓ:*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+
     let total = 0;
+    let itemNum = 1;
     cart.forEach(item => {
         const subtotal = item.price * item.quantity;
         total += subtotal;
-        message += `*${item.quantity}x ${item.name}* - $${subtotal.toFixed(2)}\n`;
-        message += `   > ${item.details}\n`;
+
+        message += `${itemNum}️⃣ *${item.name}*\n`;
+
+        // Separar los detalles en líneas individuales
+        // Los detalles tienen formato: "1x Pastor, 2x Suadero (Sin cebolla)"
+        // Separar las exclusiones
+        const detailParts = item.details.split(' (');
+        const mainDetail = detailParts[0];
+        const exclusions = detailParts.length > 1 ? detailParts[1].replace(')', '') : null;
+
+        // Cada sabor/ingrediente en su propia línea
+        const ingredients = mainDetail.split(', ');
+        ingredients.forEach(ing => {
+            message += `   • ${ing.trim()}\n`;
+        });
+
+        if (exclusions) {
+            message += `   ⚠️ Sin: ${exclusions}\n`;
+        }
+
+        message += `   💰 Subtotal: $${subtotal.toFixed(2)}\n\n`;
+        itemNum++;
     });
 
-    message += `------------------------\n`;
-    
     const globalSalsas = [];
     document.querySelectorAll('input[name="globalSalsa"]:checked').forEach(el => {
         globalSalsas.push(el.value);
     });
     if (globalSalsas.length > 0) {
-        message += `*Salsas para el pedido:* ${globalSalsas.join(', ')}\n`;
-        message += `------------------------\n`;
+        message += `🌶️ *Salsas:* ${globalSalsas.join(', ')}\n`;
+        message += `\n`;
     }
 
-    message += `*TOTAL: $${total.toFixed(2)}*`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `✅ *TOTAL A PAGAR: $${total.toFixed(2)}*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━`;
 
     // Incrementar y guardar el número de pedido
     orderNumber++;
