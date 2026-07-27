@@ -329,7 +329,13 @@ function renderMenu() {
         addBtn.className = "add-to-cart";
         addBtn.innerHTML = '<i class="ph ph-plus"></i>';
         addBtn.setAttribute("aria-label", "Configurar y agregar");
-        addBtn.onclick = () => openOptionsModal(item);
+        addBtn.onclick = () => {
+            if (isClosedToday()) {
+                showToastNotification('🔒 Hoy no estamos abiertos');
+                return;
+            }
+            openOptionsModal(item);
+        };
 
         footer.appendChild(price);
         footer.appendChild(addBtn);
@@ -1012,6 +1018,10 @@ function setupEventListeners() {
     });
 
     cartTrigger.addEventListener('click', () => {
+        if (isClosedToday()) {
+            showToastNotification('🔒 Hoy no estamos abiertos');
+            return;
+        }
         cartModalOverlay.classList.add('active');
     });
 
@@ -1138,8 +1148,12 @@ function refreshClosedBanner() {
         const msg = getClosedMessage();
         closedDayMsg.textContent = msg || '¡Hoy no abrimos! Disculpa las molestias. 🙏';
         closedDayBanner.style.display = 'flex';
+        // Bloquear visualmente el menú
+        menuContainer.classList.add('menu-blocked');
     } else {
         closedDayBanner.style.display = 'none';
+        // Desbloquear el menú
+        menuContainer.classList.remove('menu-blocked');
     }
     updateBusinessStatus();
 }
