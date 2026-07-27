@@ -122,12 +122,17 @@
                         <option value="transferencia">Transferencia</option>
                     </select>
                     
+                    <div id="cashDetails" style="display: block; background: var(--surface-hover); padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem;">
+                        <label for="cashAmount" style="display: block; margin-bottom: 5px; font-weight: 600;">¿Con cuánto pagas? (para llevar tu cambio):</label>
+                        <input type="number" id="cashAmount" placeholder="Ej. 200, 500" style="width: 100%; padding: 0.7rem; border: 1px solid var(--border-light); border-radius: 6px; font-family: 'Outfit', sans-serif;">
+                    </div>
+
                     <div id="transferDetails" style="display: none; background: var(--surface-hover); padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem;">
                         <p style="margin: 0; font-weight: 600; color: var(--primary-color);">Datos para transferencia:</p>
                         <p style="margin: 5px 0 0 0; line-height: 1.5;"><strong>Banco:</strong> BBVA<br><strong>Cuenta:</strong> 1234567890<br><strong>CLABE:</strong> 012345678901234567<br><strong>Nombre:</strong> Antojitos Viveros</p>
                     </div>
 
-                    <label class="salsas-label">Salsas para tu pedido:</label>
+                    <label class="salsas-label">Salsas (aparte) para tu pedido:</label>
                     <div class="global-salsas">
                         <label><input type="checkbox" name="globalSalsa" value="Salsa Roja"> Roja</label>
                         <label><input type="checkbox" name="globalSalsa" value="Salsa Verde"> Verde</label>

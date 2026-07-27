@@ -225,6 +225,8 @@ const checkoutBtn = document.getElementById("checkoutBtn");
 const customerNameInput = document.getElementById("customerName");
 const paymentMethodInput = document.getElementById("paymentMethod");
 const transferDetailsDiv = document.getElementById("transferDetails");
+const cashDetailsDiv = document.getElementById("cashDetails");
+const cashAmountInput = document.getElementById("cashAmount");
 
 // Elementos Modal Opciones
 const optionsModalOverlay = document.getElementById("optionsModalOverlay");
@@ -898,8 +900,9 @@ function generateWhatsAppLink() {
 
     const name = customerNameInput.value.trim();
     const paymentMethod = paymentMethodInput.value;
+    const cashAmount = cashAmountInput ? cashAmountInput.value.trim() : '';
 
-    let message = `🧾 *NUEVO PEDIDO #${orderNumber}*\n`;
+    let message = `🧾 *NUEVO PEDIDO*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
     if (name) message += `👤 *Cliente:* ${name}\n`;
@@ -909,16 +912,14 @@ function generateWhatsAppLink() {
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
     let total = 0;
-    let itemNum = 1;
     cart.forEach(item => {
         const subtotal = item.price * item.quantity;
         total += subtotal;
 
-        message += `${itemNum}️⃣ *${item.name}*\n`;
+        // Título del producto sin números correlativos para evitar confusiones de cantidad
+        message += `📌 *${item.name}*\n`;
 
         // Separar los detalles en líneas individuales
-        // Los detalles tienen formato: "1x Pastor, 2x Suadero (Sin cebolla)"
-        // Separar las exclusiones
         const detailParts = item.details.split(' (');
         const mainDetail = detailParts[0];
         const exclusions = detailParts.length > 1 ? detailParts[1].replace(')', '') : null;
@@ -934,7 +935,6 @@ function generateWhatsAppLink() {
         }
 
         message += `   💰 Subtotal: $${subtotal.toFixed(2)}\n\n`;
-        itemNum++;
     });
 
     const globalSalsas = [];
@@ -942,17 +942,16 @@ function generateWhatsAppLink() {
         globalSalsas.push(el.value);
     });
     if (globalSalsas.length > 0) {
-        message += `🌶️ *Salsas:* ${globalSalsas.join(', ')}\n`;
+        message += `🌶️ *Salsas (aparte):* ${globalSalsas.join(', ')}\n`;
         message += `\n`;
     }
 
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `✅ *TOTAL A PAGAR: $${total.toFixed(2)}*\n`;
+    if (paymentMethod === 'efectivo' && cashAmount) {
+        message += `💵 *Paga con:* $${cashAmount}\n`;
+    }
     message += `━━━━━━━━━━━━━━━━━━━━`;
-
-    // Incrementar y guardar el número de pedido
-    orderNumber++;
-    localStorage.setItem('orderNumber', orderNumber);
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -963,8 +962,10 @@ function setupEventListeners() {
     paymentMethodInput.addEventListener('change', (e) => {
         if (e.target.value === 'transferencia') {
             transferDetailsDiv.style.display = 'block';
+            if (cashDetailsDiv) cashDetailsDiv.style.display = 'none';
         } else {
             transferDetailsDiv.style.display = 'none';
+            if (cashDetailsDiv) cashDetailsDiv.style.display = 'block';
         }
     });
 
