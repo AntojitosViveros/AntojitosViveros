@@ -76,7 +76,7 @@ const menuData = [
         description: "Rellenas y calientitas.",
         price: 18.00,
         category: "Gorditas",
-        image: "https://images.unsplash.com/photo-1582169505937-b9992bd01ed9?auto=format&fit=crop&q=80&w=800",
+        image: "tapada.png",
         optionsTitle: "Elige el relleno:",
         options: [
             { name: "Frijol", price: 18.00 },
@@ -181,7 +181,7 @@ const menuData = [
         description: "Plátanos fritos calientitos. Se sirven con lechera, media crema y queso.",
         price: 35.00,
         category: "Postres",
-        image: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&q=80&w=800",
+        image: "Platano frito.png",
         optionsTitle: "Elige cómo los quieres:",
         options: [
             { name: "Con lechera, crema y queso", price: 35.00 },
@@ -197,7 +197,7 @@ const menuData = [
         description: "Coca-Cola 500ml de cristal (retornable). Bien fría para acompañar tu pedido.",
         price: 25.00,
         category: "Bebidas",
-        image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&q=80&w=800",
+        image: "cocacola.png",
         optionsTitle: "Selecciona:",
         options: [
             { name: "Coca-Cola 500ml cristal", price: 25.00 }
