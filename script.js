@@ -10,19 +10,18 @@ const menuData = [
         category: "Empanadas",
         image: "empanada.png",
         optionsTitle: "Elige el relleno principal:",
+        // allowExtra: el extra que puede agregarse a esta opción (doble ingrediente)
+        // cebollaCilantro: si al elegir el extra-queso aparece opción de cebolla/cilantro
         options: [
-            { name: "Pollo guisado", price: 18.00 },
+            { name: "Pollo guisado",  price: 18.00 },
             { name: "Picadillo de res", price: 18.00 },
-            { name: "Champiñón", price: 18.00 },
-            { name: "Queso de hebra", price: 18.00 },
-            { name: "Papa", price: 18.00 }
-        ],
-        extras: [
-            { name: "+ Ingrediente (Pollo guisado)", price: 4.00 },
-            { name: "+ Ingrediente (Picadillo)", price: 4.00 },
-            { name: "+ Ingrediente (Champiñón)", price: 4.00 },
-            { name: "+ Ingrediente (Queso)", price: 4.00 },
-            { name: "+ Ingrediente (Papa)", price: 4.00 }
+            { name: "Champiñón",      price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 } },
+            { name: "Queso de hebra", price: 18.00, allowExtra: { name: "+ Ingrediente doble", price: 4.00,
+                suboptions: ["Papa", "Champiñón", "Suadero", "Pastor", "Cabeza"] } },
+            { name: "Papa",           price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 } },
+            { name: "Suadero",        price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 }, cebollaCilantro: true },
+            { name: "Pastor",         price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 }, cebollaCilantro: true },
+            { name: "Cabeza",         price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 }, cebollaCilantro: true }
         ],
         exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso"]
     },
@@ -47,23 +46,29 @@ const menuData = [
     {
         id: "gorditas_picadas",
         name: "Gorditas Picadas",
-        description: "Base con papa, cebolla y queso rayado.",
-        price: 22.00,
+        description: "Sencilla: frijol o salsa + cebolla + queso. Regular: lleva además papa.",
+        price: 18.00,
         category: "Gorditas",
-        image: "https://images.unsplash.com/photo-1512152272829-e3139592d56f?auto=format&fit=crop&q=80&w=800",
-        optionsTitle: "Elige la base:",
+        image: "picada.png",
+        optionsTitle: "Elige tu opción y base:",
         options: [
-            { name: "Frijol", price: 22.00 },
-            { name: "Salsa Verde", price: 22.00 },
-            { name: "Salsa de Chile Seco", price: 22.00 },
-            { name: "Salsa Roja", price: 22.00 }
+            // — Sencillas (sin papa, sin ingrediente adicional) —
+            { name: "🟡 Sencilla – Frijol",             price: 18.00, noExtras: true },
+            { name: "🟡 Sencilla – Salsa Verde",         price: 18.00, noExtras: true },
+            { name: "🟡 Sencilla – Salsa Chile Seco",    price: 18.00, noExtras: true },
+            { name: "🟡 Sencilla – Salsa Roja",          price: 18.00, noExtras: true },
+            // — Regular (con papa) —
+            { name: "🔴 Con Papa – Frijol",              price: 22.00 },
+            { name: "🔴 Con Papa – Salsa Verde",         price: 22.00 },
+            { name: "🔴 Con Papa – Salsa Chile Seco",    price: 22.00 },
+            { name: "🔴 Con Papa – Salsa Roja",          price: 22.00 }
         ],
         extras: [
             { name: "Agregar Cabeza de cerdo", price: 3.00 },
             { name: "Agregar Pastor", price: 3.00 },
             { name: "Agregar Suadero de res", price: 3.00 }
         ],
-        exclusions: ["Naturales", "Sin cebolla", "Sin papa", "Sin queso rayado"]
+        exclusions: ["Naturales", "Sin cebolla", "Sin queso rayado"]
     },
     {
         id: "gorditas_tapadas",
@@ -91,7 +96,7 @@ const menuData = [
         description: "Con frijol, lechuga, tomate, aguacate, crema y queso.",
         price: 18.00,
         category: "Tostadas",
-        image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&q=80&w=800",
+        image: "tostada.png",
         optionsTitle: "Elige tu ingrediente principal:",
         options: [
             { name: "Pollo hervido", price: 18.00 },
@@ -99,7 +104,7 @@ const menuData = [
             { name: "Queso de hebra", price: 18.00 },
             { name: "Picadillo de res", price: 18.00 }
         ],
-        exclusions: ["Naturales", "Sin frijol", "Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso"]
+        exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso"]
     },
     {
         id: "tortas",
@@ -140,7 +145,7 @@ const menuData = [
         description: "Deliciosas quesadillas con el guiso de tu preferencia.",
         price: 22.00,
         category: "Quesadillas",
-        image: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8dd?auto=format&fit=crop&q=80&w=800",
+        image: "quesadilla.png",
         optionsTitle: "Elige tu guiso:",
         options: [
             { name: "Suadero", price: 22.00 },
@@ -245,6 +250,7 @@ function init() {
     renderMenu();
     setupEventListeners();
     updateCartUI();
+    applySeasonalTheme();
 }
 
 function getCategories() {
@@ -373,7 +379,7 @@ function openOptionsModal(product) {
         let currentQty = 0;
         qtySpan.textContent = currentQty;
 
-        // Contenedor de extras para esta opción
+        // Contenedor de extras para esta opción (solo si allowExtra está definido)
         const flavorExtrasContainer = document.createElement('div');
         flavorExtrasContainer.className = 'flavor-extras';
         flavorExtrasContainer.style.display = 'none';
@@ -381,8 +387,154 @@ function openOptionsModal(product) {
         flavorExtrasContainer.style.marginTop = '8px';
         
         const flavorExtrasState = [];
+        let hasExtras = false;
 
-        if (product.extras && product.extras.length > 0) {
+        // Solo mostrar extras si esta opción específica tiene allowExtra
+        if (opt.allowExtra) {
+            hasExtras = true;
+            const extra = opt.allowExtra;
+
+            // --- Fila del extra (con contador) ---
+            const extraRow = document.createElement('div');
+            extraRow.className = 'option-qty-row';
+            extraRow.style.padding = '4px 0';
+            
+            const extraNameSpan = document.createElement('span');
+            extraNameSpan.textContent = `${extra.name} (+$${extra.price.toFixed(2)})`;
+            extraNameSpan.style.color = 'var(--text-muted)';
+            extraNameSpan.style.fontSize = '0.9rem';
+            
+            const extraQtyDiv = document.createElement('div');
+            extraQtyDiv.className = 'modal-quantity-selector';
+            extraQtyDiv.style.marginBottom = '0';
+            extraQtyDiv.style.transform = 'scale(0.85)';
+            extraQtyDiv.style.transformOrigin = 'right center';
+            
+            const eMinusBtn = document.createElement('button');
+            eMinusBtn.className = 'qty-btn';
+            eMinusBtn.textContent = '-';
+            
+            const eQtySpan = document.createElement('span');
+            eQtySpan.className = 'flavor-extra-qty';
+            eQtySpan.dataset.name = extra.name;
+            eQtySpan.dataset.price = extra.price;
+            
+            const ePlusBtn = document.createElement('button');
+            ePlusBtn.className = 'qty-btn';
+            ePlusBtn.textContent = '+';
+            
+            let eCurrentQty = 0;
+            eQtySpan.textContent = eCurrentQty;
+
+            const stateObj = { setQty: (val) => { eCurrentQty = val; eQtySpan.textContent = val; }, getQty: () => eCurrentQty };
+            flavorExtrasState.push(stateObj);
+
+            // Si la opción base tiene subopciones (ej. Queso → Papa/Champiñón/Suadero/Pastor/Cabeza)
+            let suboptionSelect = null;
+            if (extra.suboptions && extra.suboptions.length > 0) {
+                const subRow = document.createElement('div');
+                subRow.style.padding = '4px 0';
+                subRow.style.fontSize = '0.88rem';
+                subRow.style.color = 'var(--text-muted)';
+
+                const subLabel = document.createElement('span');
+                subLabel.textContent = '¿Cuál ingrediente doble?  ';
+
+                suboptionSelect = document.createElement('select');
+                suboptionSelect.className = 'subopt-select';
+                suboptionSelect.dataset.role = 'suboptionSelect';
+                suboptionSelect.style.padding = '2px 6px';
+                suboptionSelect.style.borderRadius = '6px';
+                suboptionSelect.style.border = '1px solid var(--border-light)';
+                suboptionSelect.style.fontSize = '0.88rem';
+                suboptionSelect.style.fontFamily = "'Outfit', sans-serif";
+                suboptionSelect.style.display = 'none'; // se muestra al elegir qty > 0
+
+                extra.suboptions.forEach(sub => {
+                    const op = document.createElement('option');
+                    op.value = sub;
+                    op.textContent = sub;
+                    suboptionSelect.appendChild(op);
+                });
+
+                subRow.appendChild(subLabel);
+                subRow.appendChild(suboptionSelect);
+                flavorExtrasContainer.appendChild(subRow);
+            }
+
+            eMinusBtn.addEventListener('click', () => {
+                if (eCurrentQty > 0) {
+                    stateObj.setQty(eCurrentQty - 1);
+                    if (suboptionSelect) suboptionSelect.style.display = eCurrentQty > 0 ? 'inline-block' : 'none';
+                    // Ocultar cebolla/cilantro si qty llega a 0
+                    if (eCurrentQty === 0 && opt.cebollaCilantro) {
+                        const ccDiv = flavorExtrasContainer.querySelector('.cebolla-cilantro-row');
+                        if (ccDiv) ccDiv.style.display = 'none';
+                    }
+                    updateModalPrice();
+                }
+            });
+
+            ePlusBtn.addEventListener('click', () => {
+                if (eCurrentQty < currentQty) {
+                    stateObj.setQty(eCurrentQty + 1);
+                    if (suboptionSelect) suboptionSelect.style.display = 'inline-block';
+                    // Mostrar cebolla/cilantro si aplica
+                    if (opt.cebollaCilantro) {
+                        const ccDiv = flavorExtrasContainer.querySelector('.cebolla-cilantro-row');
+                        if (ccDiv) ccDiv.style.display = 'flex';
+                    }
+                    updateModalPrice();
+                }
+            });
+            
+            extraQtyDiv.appendChild(eMinusBtn);
+            extraQtyDiv.appendChild(eQtySpan);
+            extraQtyDiv.appendChild(ePlusBtn);
+            
+            extraRow.appendChild(extraNameSpan);
+            extraRow.appendChild(extraQtyDiv);
+            flavorExtrasContainer.appendChild(extraRow);
+
+            // Cebolla y cilantro (solo para Suadero, Pastor, Cabeza)
+            if (opt.cebollaCilantro) {
+                const ccDiv = document.createElement('div');
+                ccDiv.className = 'cebolla-cilantro-row option-qty-row';
+                ccDiv.style.display = 'none';
+                ccDiv.style.padding = '4px 0';
+                ccDiv.style.gap = '10px';
+                ccDiv.style.flexWrap = 'wrap';
+
+                const ccLabel = document.createElement('span');
+                ccLabel.textContent = 'Queso con:';
+                ccLabel.style.color = 'var(--text-muted)';
+                ccLabel.style.fontSize = '0.88rem';
+                ccDiv.appendChild(ccLabel);
+
+                ['Cebolla', 'Cilantro'].forEach(item => {
+                    const lbl = document.createElement('label');
+                    lbl.style.display = 'flex';
+                    lbl.style.alignItems = 'center';
+                    lbl.style.gap = '4px';
+                    lbl.style.fontSize = '0.88rem';
+                    lbl.style.cursor = 'pointer';
+                    lbl.style.color = 'var(--text-muted)';
+
+                    const chk = document.createElement('input');
+                    chk.type = 'checkbox';
+                    chk.className = 'cc-checkbox';
+                    chk.dataset.item = item;
+
+                    lbl.appendChild(chk);
+                    lbl.appendChild(document.createTextNode(item));
+                    ccDiv.appendChild(lbl);
+                });
+
+                flavorExtrasContainer.appendChild(ccDiv);
+            }
+        } else if (!opt.noExtras && product.extras && product.extras.length > 0) {
+            // Productos que usan el sistema global de extras (no empanadas, no sencillas)
+            hasExtras = true;
             product.extras.forEach((extra) => {
                 const extraRow = document.createElement('div');
                 extraRow.className = 'option-qty-row';
@@ -426,7 +578,7 @@ function openOptionsModal(product) {
                 });
 
                 ePlusBtn.addEventListener('click', () => {
-                    if (eCurrentQty < currentQty) { // Limitar la cantidad de extra a la cantidad base
+                    if (eCurrentQty < currentQty) {
                         stateObj.setQty(eCurrentQty + 1);
                         updateModalPrice();
                     }
@@ -464,7 +616,7 @@ function openOptionsModal(product) {
         plusBtn.addEventListener('click', () => {
             currentQty++;
             qtySpan.textContent = currentQty;
-            if (currentQty > 0 && product.extras && product.extras.length > 0) {
+            if (currentQty > 0 && hasExtras) {
                 flavorExtrasContainer.style.display = 'block';
             }
             updateModalPrice();
@@ -478,7 +630,7 @@ function openOptionsModal(product) {
         row.appendChild(qtyDiv);
         
         optionWrapper.appendChild(row);
-        if (product.extras && product.extras.length > 0) {
+        if (hasExtras) {
             optionWrapper.appendChild(flavorExtrasContainer);
         }
         
@@ -566,7 +718,22 @@ function confirmOptionsAndAddToCart() {
                     const extraQty = parseInt(extraEl.textContent);
                     if (extraQty > 0) {
                         totalExtrasPrice += extraQty * parseFloat(extraEl.dataset.price);
-                        flavorExtras.push(`${extraQty} con ${extraEl.dataset.name}`);
+                        let extraLabel = extraEl.dataset.name;
+
+                        // Si hay subopción seleccionada (ingrediente doble con selector)
+                        const subSel = wrapper.querySelector('[data-role="suboptionSelect"]');
+                        if (subSel && subSel.style.display !== 'none') {
+                            extraLabel += ` (${subSel.value})`;
+                        }
+
+                        // Si tiene cebolla/cilantro marcados
+                        const ccChecked = [];
+                        wrapper.querySelectorAll('.cc-checkbox:checked').forEach(cc => ccChecked.push(cc.dataset.item));
+                        if (ccChecked.length > 0) {
+                            extraLabel += ` con ${ccChecked.join(' y ')}`;
+                        }
+
+                        flavorExtras.push(`${extraQty} ${extraLabel}`);
                     }
                 });
             }
@@ -853,3 +1020,189 @@ function setupEventListeners() {
 
 // Arrancar la app
 init();
+
+// =============================================
+// === TEMAS POR FECHA ESPECIAL ================
+// =============================================
+function applySeasonalTheme() {
+    const now  = new Date();
+    const m    = now.getMonth() + 1; // 1–12
+    const d    = now.getDate();
+
+    const themes = [
+        {
+            // 🧪 PRUEBA TEMPORAL — quitar después
+            days: [{m:7, d:26}],
+            name: '¡Probando el tema festivo!',
+            emoji: '🎉🌟🎊✨',
+            primary: '#f59e0b',
+            glow:   'rgba(245,158,11,0.45)',
+            border: 'rgba(245,158,11,0.7)',
+            bg:     'rgba(18,8,0,0.95)'
+        },
+        {
+            days: [{m:1, d:1}],
+            name: '¡Feliz Año Nuevo!',
+            emoji: '🎆🎇✨🥂',
+            primary: '#FFD700',
+            glow:   'rgba(255,215,0,0.38)',
+            border: 'rgba(255,215,0,0.6)',
+            bg:     'rgba(18,8,0,0.9)'
+        },
+        {
+            days: [{m:2, d:14}],
+            name: '¡Feliz San Valentín!',
+            emoji: '💕❤️🌹💝',
+            primary: '#ff6b8a',
+            glow:   'rgba(255,80,120,0.38)',
+            border: 'rgba(255,80,120,0.6)',
+            bg:     'rgba(45,0,18,0.9)'
+        },
+        {
+            days: [{m:3, d:8}],
+            name: '¡Día Internacional de la Mujer!',
+            emoji: '💜✊🌷💫',
+            primary: '#cc44ff',
+            glow:   'rgba(180,50,255,0.38)',
+            border: 'rgba(180,50,255,0.6)',
+            bg:     'rgba(22,0,36,0.9)'
+        },
+        {
+            days: [{m:5, d:5}],
+            name: '¡Viva Puebla! Cinco de Mayo',
+            emoji: '🇲🇽🌮🎉',
+            primary: '#00b050',
+            glow:   'rgba(206,17,38,0.38)',
+            border: 'rgba(206,17,38,0.6)',
+            bg:     'rgba(0,28,8,0.9)'
+        },
+        {
+            days: [{m:5, d:10}],
+            name: '¡Feliz Día de las Mamás!',
+            emoji: '💐🌷🌸💗',
+            primary: '#ff85c2',
+            glow:   'rgba(255,120,180,0.38)',
+            border: 'rgba(255,120,180,0.6)',
+            bg:     'rgba(48,0,22,0.9)'
+        },
+        {
+            days: [{m:9, d:15}, {m:9, d:16}],
+            name: '¡Viva México!',
+            emoji: '🇲🇽🦅🎺🎊',
+            primary: '#00b050',
+            glow:   'rgba(206,17,38,0.45)',
+            border: 'rgba(206,17,38,0.7)',
+            bg:     'rgba(0,28,8,0.95)'
+        },
+        {
+            days: [{m:10, d:31}, {m:11, d:1}, {m:11, d:2}],
+            name: 'Día de Muertos',
+            emoji: '💀🌼🕯️🦋',
+            primary: '#dd44ff',
+            glow:   'rgba(200,50,255,0.42)',
+            border: 'rgba(200,50,255,0.65)',
+            bg:     'rgba(16,0,26,0.95)'
+        },
+        {
+            days: [{m:12, d:12}],
+            name: 'Día de la Virgen de Guadalupe',
+            emoji: '🌹🙏💫⭐',
+            primary: '#ffd700',
+            glow:   'rgba(255,200,0,0.38)',
+            border: 'rgba(255,200,0,0.6)',
+            bg:     'rgba(28,5,0,0.95)'
+        },
+        {
+            days: [{m:12, d:24}, {m:12, d:25}],
+            name: '¡Feliz Navidad!',
+            emoji: '🎄🎅⭐🎁',
+            primary: '#00cc55',
+            glow:   'rgba(0,200,70,0.38)',
+            border: 'rgba(0,200,70,0.6)',
+            bg:     'rgba(0,22,8,0.95)'
+        },
+        {
+            days: [{m:12, d:31}],
+            name: '¡Feliz Fin de Año!',
+            emoji: '🎆🥂✨🎇',
+            primary: '#FFD700',
+            glow:   'rgba(255,215,0,0.38)',
+            border: 'rgba(255,215,0,0.6)',
+            bg:     'rgba(18,8,0,0.9)'
+        },
+    ];
+
+    const theme = themes.find(t => t.days.some(day => day.m === m && day.d === d));
+    if (!theme) return;
+
+    // --- Inyectar estilos de animación ---
+    const style = document.createElement('style');
+    style.id = 'festive-styles';
+    style.textContent = `
+        @keyframes festivePulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.65; }
+        }
+        @keyframes festiveSlide {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        #festive-banner {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        #festive-banner .festive-track {
+            display: inline-block;
+            animation: festiveSlide 18s linear infinite;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // --- Actualizar variable de color primario ---
+    document.documentElement.style.setProperty('--primary-color', theme.primary);
+    document.documentElement.style.setProperty('--primary-hover', theme.primary);
+
+    // --- Actualizar estilo del header ---
+    const header = document.querySelector('.header');
+    if (header) {
+        header.style.background     = theme.bg;
+        header.style.borderBottom   = `1px solid ${theme.border}`;
+        header.style.boxShadow      = `0 0 35px ${theme.glow}, 0 4px 20px rgba(0,0,0,0.5)`;
+    }
+
+    // --- Crear banner festivo (marquee animado) ---
+    const banner = document.createElement('div');
+    banner.id = 'festive-banner';
+    banner.style.cssText = `
+        background: linear-gradient(90deg, transparent, ${theme.glow}, transparent);
+        border-bottom: 1px solid ${theme.border};
+        padding: 5px 0;
+        text-align: center;
+        font-size: 0.77rem;
+        font-weight: 700;
+        color: ${theme.primary};
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        animation: festivePulse 2.5s ease-in-out infinite;
+    `;
+
+    // Texto duplicado para efecto marquee infinito
+    const chunk = ` ${theme.emoji}  ${theme.name}  ${theme.emoji} 　`;
+    const track = document.createElement('span');
+    track.className = 'festive-track';
+    track.textContent = chunk.repeat(6);
+    banner.appendChild(track);
+
+    // Insertar banner justo después del header
+    if (header) header.insertAdjacentElement('afterend', banner);
+
+    // --- Actualizar el glow del fondo de la app ---
+    const appWrapper = document.querySelector('.app-wrapper');
+    if (appWrapper) {
+        appWrapper.style.backgroundImage = `
+            radial-gradient(ellipse at 50% -10%, ${theme.glow} 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 80%, ${theme.glow} 0%, transparent 50%),
+            url('menu_bg.png')
+        `;
+    }
+}

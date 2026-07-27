@@ -530,9 +530,28 @@ body {
 
 .landing-text {
     color: rgba(255,255,255,0.6);
-    margin-bottom: 1.4rem;
+    margin-bottom: 1rem;
     font-size: 0.82rem;
     line-height: 1.6;
+}
+
+.landing-schedule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: var(--primary-color);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1.4rem;
+    letter-spacing: 0.3px;
+}
+
+.landing-schedule i {
+    font-size: 1rem;
 }
 
 .btn-enter {
