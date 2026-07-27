@@ -953,6 +953,17 @@ function generateWhatsAppLink() {
     }
     message += `━━━━━━━━━━━━━━━━━━━━`;
 
+    if (paymentMethod === 'transferencia') {
+        message += `\n\n💳 *PAGO POR TRANSFERENCIA*\n\n`;
+        message += `🏦 *Banco:* BBVA\n`;
+        message += `👤 *Titular:* Isaias Eleuterio Viveros Ronzon\n`;
+        message += `💳 *CLABE:* 012180015729414906\n\n`;
+        message += `📝 *Concepto de pago:* Escribe tu nombre.\n\n`;
+        message += `📲 *Una vez realizado el pago, envíanos tu comprobante de transferencia por WhatsApp para confirmar tu pedido.*\n\n`;
+        message += `¡Gracias por tu compra! ❤️\n`;
+        message += `*Antojitos Viveros*`;
+    }
+
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
