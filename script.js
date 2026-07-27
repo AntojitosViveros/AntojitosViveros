@@ -23,7 +23,7 @@ const menuData = [
             { name: "Pastor",         price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 }, cebollaCilantro: true },
             { name: "Cabeza",         price: 18.00, allowExtra: { name: "+ Queso de hebra", price: 4.00 }, cebollaCilantro: true }
         ],
-        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso"]
+        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso rayado"]
     },
     {
         id: "tacos",
@@ -53,15 +53,15 @@ const menuData = [
         optionsTitle: "Elige tu opción y base:",
         options: [
             // — Sencillas (sin papa, sin ingrediente adicional) —
-            { name: "🟡 Sencilla – Frijol",             price: 18.00, noExtras: true },
-            { name: "🟡 Sencilla – Salsa Verde",         price: 18.00, noExtras: true },
-            { name: "🟡 Sencilla – Salsa Chile Seco",    price: 18.00, noExtras: true },
-            { name: "🟡 Sencilla – Salsa Roja",          price: 18.00, noExtras: true },
+            { name: "Sencilla – Frijol",             price: 18.00, noExtras: true },
+            { name: "Sencilla – Salsa Verde",         price: 18.00, noExtras: true },
+            { name: "Sencilla – Salsa Chile Seco",    price: 18.00, noExtras: true },
+            { name: "Sencilla – Salsa Roja",          price: 18.00, noExtras: true },
             // — Regular (con papa) —
-            { name: "🔴 Con Papa – Frijol",              price: 22.00 },
-            { name: "🔴 Con Papa – Salsa Verde",         price: 22.00 },
-            { name: "🔴 Con Papa – Salsa Chile Seco",    price: 22.00 },
-            { name: "🔴 Con Papa – Salsa Roja",          price: 22.00 }
+            { name: "Con Papa – Frijol",              price: 22.00 },
+            { name: "Con Papa – Salsa Verde",         price: 22.00 },
+            { name: "Con Papa – Salsa Chile Seco",    price: 22.00 },
+            { name: "Con Papa – Salsa Roja",          price: 22.00 }
         ],
         extras: [
             { name: "Agregar Cabeza de cerdo", price: 3.00 },
@@ -104,7 +104,7 @@ const menuData = [
             { name: "Queso de hebra", price: 18.00 },
             { name: "Picadillo de res", price: 18.00 }
         ],
-        exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso"]
+        exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso rayado"]
     },
     {
         id: "tortas",
@@ -173,7 +173,7 @@ const menuData = [
             { name: "Papa", price: 18.00 },
             { name: "Queso de hebra", price: 18.00 }
         ],
-        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso"]
+        exclusions: ["Naturales", "Sin lechuga", "Sin crema", "Sin queso rayado"]
     },
     {
         id: "platanos_fritos",
@@ -189,7 +189,7 @@ const menuData = [
             { name: "Solo crema y queso", price: 35.00 },
             { name: "Sin acompañamiento", price: 35.00 }
         ],
-        exclusions: ["Sin lechera", "Sin media crema", "Sin queso"]
+        exclusions: ["Sin lechera", "Sin media crema", "Sin queso rayado"]
     },
     {
         id: "refrescos",
@@ -246,6 +246,15 @@ const optionsModalPrice = document.getElementById("optionsModalPrice");
 const landingScreen = document.getElementById("landingScreen");
 const enterMenuBtn = document.getElementById("enterMenuBtn");
 
+// Elementos Admin Panel
+const adminPanelOverlay = document.getElementById('adminPanelOverlay');
+const closeAdminBtn     = document.getElementById('closeAdminBtn');
+const toggleClosedBtn   = document.getElementById('toggleClosedBtn');
+const closedDayBanner   = document.getElementById('closedDayBanner');
+const closedDayMsg      = document.getElementById('closedDayMsg');
+const adminDateLabel    = document.getElementById('adminDateLabel');
+const closedMsgInput    = document.getElementById('closedMsgInput');
+
 // Inicialización
 function init() {
     renderCategories();
@@ -253,6 +262,8 @@ function init() {
     setupEventListeners();
     updateCartUI();
     applySeasonalTheme();
+    updateBusinessStatus();
+    setupAdminPanel();
 }
 
 function getCategories() {
@@ -725,7 +736,7 @@ function confirmOptionsAndAddToCart() {
                         // Si hay subopción seleccionada (ingrediente doble con selector)
                         const subSel = wrapper.querySelector('[data-role="suboptionSelect"]');
                         if (subSel && subSel.style.display !== 'none') {
-                            extraLabel += ` (${subSel.value})`;
+                            extraLabel += `: ${subSel.value}`;
                         }
 
                         // Si tiene cebolla/cilantro marcados
@@ -735,7 +746,7 @@ function confirmOptionsAndAddToCart() {
                             extraLabel += ` con ${ccChecked.join(' y ')}`;
                         }
 
-                        flavorExtras.push(`${extraQty} ${extraLabel}`);
+                        flavorExtras.push(`${extraQty > 1 ? extraQty + 'x ' : ''}${extraLabel}`);
                     }
                 });
             }
@@ -760,11 +771,11 @@ function confirmOptionsAndAddToCart() {
     
     const totalPriceForBundle = totalBasePrice + totalExtrasPrice;
     
-    // Create detailed string for the cart UI
+    // String legible para la UI del carrito
     let detailsString = baseDetails.join(', ');
-    if (exclusions.length > 0) detailsString += ` (${exclusions.join(', ')})`;
+    if (exclusions.length > 0) detailsString += ` (Sin: ${exclusions.join(', ')})`;
 
-    // Create unique ID so identical configurations stack, but different ones don't
+    // ID único según configuración
     const configHash = btoa(encodeURIComponent(detailsString)).substring(0, 15);
     const cartItemId = `${productBeingConfigured.id}-${configHash}`;
     
@@ -773,18 +784,40 @@ function confirmOptionsAndAddToCart() {
         productId: productBeingConfigured.id,
         name: productBeingConfigured.name,
         details: detailsString,
+        baseDetails: baseDetails,  // Arreglo con cada sabor/ingrediente
+        exclusions: exclusions,    // Arreglo con exclusiones ("Sin queso", etc.)
         price: totalPriceForBundle,
         image: productBeingConfigured.image,
-        quantity: 1 // A complete bundle represents 1 quantity in cart
+        quantity: 1
     };
 
     addToCart(cartItem);
     
+    // Notificación flotante animada
+    showToastNotification(`¡${totalBaseQty}x ${productBeingConfigured.name} agregado!`);
+
     optionsModalOverlay.classList.remove('active');
     productBeingConfigured = null;
     
-    cartTrigger.style.transform = 'scale(1.2)';
-    setTimeout(() => cartTrigger.style.transform = 'scale(1)', 200);
+    cartTrigger.classList.add('cart-pulse');
+    setTimeout(() => cartTrigger.classList.remove('cart-pulse'), 600);
+}
+
+// Notificación Flotante (Toast)
+function showToastNotification(message) {
+    let toast = document.getElementById('toastNotification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toastNotification';
+        document.body.appendChild(toast);
+    }
+    toast.className = 'toast-notification show';
+    toast.innerHTML = `<i class="ph ph-check-circle" style="color: #25d366; font-size: 1.3rem;"></i> ${message}`;
+    
+    if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    toast.timeoutId = setTimeout(() => {
+        toast.className = 'toast-notification';
+    }, 2800);
 }
 
 // Lógica del Carrito
@@ -903,38 +936,34 @@ function generateWhatsAppLink() {
     const cashAmount = cashAmountInput ? cashAmountInput.value.trim() : '';
 
     let message = `🧾 *NUEVO PEDIDO*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-
     if (name) message += `👤 *Cliente:* ${name}\n`;
-    message += `💳 *Pago:* ${paymentMethod === 'efectivo' ? '💵 Efectivo' : '🏦 Transferencia'}\n`;
-    message += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `🛒 *LO QUE PIDIÓ:*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    message += `💳 *Pago:* ${paymentMethod === 'efectivo' ? `💵 Efectivo${cashAmount ? ` (Paga con: $${cashAmount})` : ''}` : '🏦 Transferencia'}\n`;
+    message += `\n🛒 *DETALLE:*\n`;
 
     let total = 0;
     cart.forEach(item => {
         const subtotal = item.price * item.quantity;
         total += subtotal;
 
-        // Título del producto sin números correlativos para evitar confusiones de cantidad
-        message += `📌 *${item.name}*\n`;
+        message += `📌 *${item.name}* ($${subtotal.toFixed(2)}):\n`;
 
-        // Separar los detalles en líneas individuales
-        const detailParts = item.details.split(' (');
-        const mainDetail = detailParts[0];
-        const exclusions = detailParts.length > 1 ? detailParts[1].replace(')', '') : null;
-
-        // Cada sabor/ingrediente en su propia línea
-        const ingredients = mainDetail.split(', ');
-        ingredients.forEach(ing => {
-            message += `   • ${ing.trim()}\n`;
-        });
-
-        if (exclusions) {
-            message += `   ⚠️ Sin: ${exclusions}\n`;
+        if (item.baseDetails && Array.isArray(item.baseDetails)) {
+            item.baseDetails.forEach(detail => {
+                message += `• ${detail}\n`;
+            });
+        } else {
+            const detailParts = item.details.split(' (Sin: ');
+            const mainDetail = detailParts[0];
+            const ingredients = mainDetail.split(', ');
+            ingredients.forEach(ing => {
+                message += `• ${ing.trim()}\n`;
+            });
         }
 
-        message += `   💰 Subtotal: $${subtotal.toFixed(2)}\n\n`;
+        if (item.exclusions && item.exclusions.length > 0) {
+            message += `⚠️ Sin: ${item.exclusions.join(', ')}\n`;
+        }
+        message += `\n`;
     });
 
     const globalSalsas = [];
@@ -942,30 +971,32 @@ function generateWhatsAppLink() {
         globalSalsas.push(el.value);
     });
     if (globalSalsas.length > 0) {
-        message += `🌶️ *Salsas (aparte):* ${globalSalsas.join(', ')}\n`;
-        message += `\n`;
+        message += `🌶️ *Salsas (aparte):* ${globalSalsas.join(', ')}\n\n`;
     }
 
-    message += `━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `✅ *TOTAL A PAGAR: $${total.toFixed(2)}*\n`;
-    if (paymentMethod === 'efectivo' && cashAmount) {
-        message += `💵 *Paga con:* $${cashAmount}\n`;
-    }
-    message += `━━━━━━━━━━━━━━━━━━━━`;
+    message += `✅ *TOTAL A PAGAR: $${total.toFixed(2)}*`;
 
     if (paymentMethod === 'transferencia') {
-        message += `\n\n💳 *PAGO POR TRANSFERENCIA*\n\n`;
-        message += `🏦 *Banco:* BBVA\n`;
-        message += `👤 *Titular:* Isaias Eleuterio Viveros Ronzon\n`;
-        message += `💳 *CLABE:* 012180015729414906\n\n`;
-        message += `📝 *Concepto de pago:* Escribe tu nombre.\n\n`;
-        message += `📲 *Una vez realizado el pago, envíanos tu comprobante de transferencia por WhatsApp para confirmar tu pedido.*\n\n`;
-        message += `¡Gracias por tu compra! ❤️\n`;
-        message += `*Antojitos Viveros*`;
+        message += `\n\n💳 *PAGO POR TRANSFERENCIA*\n`;
+        message += `🏦 Banco: BBVA\n`;
+        message += `👤 Titular: Isaias Eleuterio Viveros Ronzon\n`;
+        message += `💳 CLABE: 012180015729414906\n`;
+        message += `📝 Concepto de pago: Escribe tu nombre.\n`;
+        message += `📲 Una vez realizado el pago, envíanos tu comprobante.`;
     }
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+
+    // 🌟 Limpiar carrito y campos automáticamente después de enviar
+    cart = [];
+    updateCartUI();
+    if (customerNameInput) customerNameInput.value = '';
+    if (cashAmountInput) cashAmountInput.value = '';
+    document.querySelectorAll('input[name="globalSalsa"]').forEach(el => el.checked = false);
+    
+    // Cerrar el modal del carrito
+    cartModalOverlay.classList.remove('active');
 }
 
 // Event Listeners
@@ -996,13 +1027,6 @@ function setupEventListeners() {
 
     // Quantity selector in modal removed as it's now per-ingredient
 
-    // Cerrar clickeando afuera (para ambos modales)
-    cartModalOverlay.addEventListener('click', (e) => {
-        if (e.target === cartModalOverlay) {
-            cartModalOverlay.classList.remove('active');
-        }
-    });
-
     optionsModalOverlay.addEventListener('click', (e) => {
         if (e.target === optionsModalOverlay) {
             optionsModalOverlay.classList.remove('active');
@@ -1022,16 +1046,188 @@ function setupEventListeners() {
     if (enterMenuBtn) {
         enterMenuBtn.addEventListener('click', () => {
             landingScreen.classList.add('hidden');
-            // Remove from DOM after transition to free up clicks/memory
             setTimeout(() => {
                 landingScreen.style.display = 'none';
             }, 600);
         });
     }
+
+    // Botones de compartir menú por WhatsApp
+    const shareBtn = document.getElementById('shareMenuBtn');
+    const shareHeaderBtn = document.getElementById('shareMenuHeaderBtn');
+    if (shareBtn) shareBtn.addEventListener('click', shareMenu);
+    if (shareHeaderBtn) shareHeaderBtn.addEventListener('click', shareMenu);
+}
+
+// Indicador de Abierto / Cerrado en tiempo real
+function updateBusinessStatus() {
+    const statusEl = document.getElementById('businessStatus');
+    if (!statusEl) return;
+
+    const now = new Date();
+    const day  = now.getDay();
+    const hour = now.getHours();
+
+    // Si el dueño marcó hoy como cerrado manualmente, siempre mostrar cerrado
+    if (typeof isClosedToday === 'function' && isClosedToday()) {
+        statusEl.className = 'status-pill closed';
+        statusEl.innerHTML = '<span class="status-dot"></span> Cerrado hoy';
+        return;
+    }
+
+    // Horario: Martes(2) a Viernes(5) de 20:00 a 23:00 (8:00 PM a 11:00 PM)
+    const isOpen = (day >= 2 && day <= 5) && (hour >= 20 && hour < 23);
+
+    if (isOpen) {
+        statusEl.className = 'status-pill open';
+        statusEl.innerHTML = '<span class="status-dot"></span> Abierto';
+    } else {
+        statusEl.className = 'status-pill closed';
+        statusEl.innerHTML = '<span class="status-dot"></span> Cerrado';
+    }
+}
+
+// Recomendar menú por WhatsApp
+function shareMenu() {
+    const text = "¡Hola! Te recomiendo los antojitos de *Antojitos Viveros* 🌮🤤. Tienen empanadas, tacos, picadas y más. Revisa su menú digital aquí:\n" + window.location.href;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank');
 }
 
 // Arrancar la app
 init();
+
+// Actualizar el indicador de estado cada minuto
+setInterval(updateBusinessStatus, 60000);
+
+// =============================================
+// === PANEL DE ADMIN — DÍA CERRADO ===========
+// =============================================
+function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+
+function isClosedToday() {
+    const closed = JSON.parse(localStorage.getItem('closedDays') || '{}');
+    return !!closed[getTodayKey()];
+}
+
+function getClosedMessage() {
+    const closed = JSON.parse(localStorage.getItem('closedDays') || '{}');
+    return closed[getTodayKey()]?.msg || '';
+}
+
+function setClosedToday(closed, customMsg) {
+    const data = JSON.parse(localStorage.getItem('closedDays') || '{}');
+    if (closed) {
+        data[getTodayKey()] = { msg: customMsg || '' };
+    } else {
+        delete data[getTodayKey()];
+    }
+    // Limpiar entradas antiguas (>7 días)
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    Object.keys(data).forEach(key => {
+        if (new Date(key).getTime() < cutoff) delete data[key];
+    });
+    localStorage.setItem('closedDays', JSON.stringify(data));
+}
+
+function refreshClosedBanner() {
+    if (isClosedToday()) {
+        const msg = getClosedMessage();
+        closedDayMsg.textContent = msg || '¡Hoy no abrimos! Disculpa las molestias. 🙏';
+        closedDayBanner.style.display = 'flex';
+    } else {
+        closedDayBanner.style.display = 'none';
+    }
+    updateBusinessStatus();
+}
+
+function refreshAdminToggleBtn() {
+    if (isClosedToday()) {
+        toggleClosedBtn.className = 'admin-toggle-btn admin-toggle-open';
+        toggleClosedBtn.innerHTML = '<i class="ph ph-lock-open"></i> Marcar como ABIERTO hoy';
+    } else {
+        toggleClosedBtn.className = 'admin-toggle-btn admin-toggle-close';
+        toggleClosedBtn.innerHTML = '<i class="ph ph-lock"></i> Marcar como CERRADO hoy';
+    }
+}
+
+function setupAdminPanel() {
+    let tapCount = 0;
+    let tapTimer = null;
+
+    // Activar panel tocando el logo 5 veces rápido
+    const logoEl = document.querySelector('.logo h1');
+    if (logoEl) {
+        logoEl.addEventListener('click', () => {
+            tapCount++;
+            clearTimeout(tapTimer);
+            tapTimer = setTimeout(() => { tapCount = 0; }, 2500);
+            if (tapCount >= 5) {
+                tapCount = 0;
+                openAdminPanel();
+            }
+        });
+    }
+
+    // Cerrar panel
+    if (closeAdminBtn) {
+        closeAdminBtn.addEventListener('click', closeAdminPanel);
+    }
+    if (adminPanelOverlay) {
+        adminPanelOverlay.addEventListener('click', (e) => {
+            if (e.target === adminPanelOverlay) closeAdminPanel();
+        });
+    }
+
+    // Toggle abierto/cerrado
+    if (toggleClosedBtn) {
+        toggleClosedBtn.addEventListener('click', () => {
+            const nowClosed = isClosedToday();
+            const msg = closedMsgInput ? closedMsgInput.value.trim() : '';
+            setClosedToday(!nowClosed, msg);
+            refreshAdminToggleBtn();
+            refreshClosedBanner();
+        });
+    }
+
+    // Guardar mensaje personalizado al escribir
+    if (closedMsgInput) {
+        closedMsgInput.addEventListener('input', () => {
+            if (isClosedToday()) {
+                setClosedToday(true, closedMsgInput.value.trim());
+                refreshClosedBanner();
+            }
+        });
+    }
+
+    // Cargar estado inicial al arrancar
+    refreshClosedBanner();
+}
+
+function openAdminPanel() {
+    if (!adminPanelOverlay) return;
+    const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const now = new Date();
+    if (adminDateLabel) {
+        adminDateLabel.textContent = `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} ${now.getFullYear()}`;
+    }
+    if (closedMsgInput) {
+        closedMsgInput.value = getClosedMessage();
+    }
+    refreshAdminToggleBtn();
+    adminPanelOverlay.style.display = 'flex';
+    adminPanelOverlay.classList.add('active');
+}
+
+function closeAdminPanel() {
+    if (!adminPanelOverlay) return;
+    adminPanelOverlay.classList.remove('active');
+    setTimeout(() => { adminPanelOverlay.style.display = 'none'; }, 300);
+}
 
 // =============================================
 // === TEMAS POR FECHA ESPECIAL ================
@@ -1043,16 +1239,17 @@ function applySeasonalTheme() {
 
     const themes = [
         {
-            // 🧪 PRUEBA TEMPORAL — quitar después
-            days: [{m:7, d:26}],
-            name: '¡Probando el tema festivo!',
-            emoji: '🎉🌟🎊✨',
-            primary: '#f59e0b',
-            glow:   'rgba(245,158,11,0.45)',
-            border: 'rgba(245,158,11,0.7)',
-            bg:     'rgba(18,8,0,0.95)'
+            // 6 de enero — Día de Reyes
+            days: [{m:1, d:6}],
+            name: '¡Feliz Día de Reyes!',
+            emoji: '👑🎁✨🌟',
+            primary: '#FFD700',
+            glow:   'rgba(255,215,0,0.42)',
+            border: 'rgba(255,215,0,0.65)',
+            bg:     'rgba(22,12,0,0.95)'
         },
         {
+            // 1 de enero — Año Nuevo
             days: [{m:1, d:1}],
             name: '¡Feliz Año Nuevo!',
             emoji: '🎆🎇✨🥂',
@@ -1062,8 +1259,19 @@ function applySeasonalTheme() {
             bg:     'rgba(18,8,0,0.9)'
         },
         {
+            // 2 de febrero — Día de la Candelaria
+            days: [{m:2, d:2}],
+            name: '¡Feliz Día de la Candelaria!',
+            emoji: '🕯️🌽✨🙏',
+            primary: '#ffb347',
+            glow:   'rgba(255,150,60,0.38)',
+            border: 'rgba(255,150,60,0.6)',
+            bg:     'rgba(28,10,0,0.92)'
+        },
+        {
+            // 14 de febrero — Día del Amor
             days: [{m:2, d:14}],
-            name: '¡Feliz San Valentín!',
+            name: '¡Feliz Día del Amor y la Amistad!',
             emoji: '💕❤️🌹💝',
             primary: '#ff6b8a',
             glow:   'rgba(255,80,120,0.38)',
@@ -1071,6 +1279,17 @@ function applySeasonalTheme() {
             bg:     'rgba(45,0,18,0.9)'
         },
         {
+            // 24 de febrero — Día de la Bandera
+            days: [{m:2, d:24}],
+            name: '¡Viva México! Día de la Bandera',
+            emoji: '🇲🇽🦅🌵💚',
+            primary: '#00b050',
+            glow:   'rgba(206,17,38,0.38)',
+            border: 'rgba(206,17,38,0.6)',
+            bg:     'rgba(0,28,8,0.9)'
+        },
+        {
+            // 8 de marzo — Día Internacional de la Mujer
             days: [{m:3, d:8}],
             name: '¡Día Internacional de la Mujer!',
             emoji: '💜✊🌷💫',
@@ -1080,6 +1299,17 @@ function applySeasonalTheme() {
             bg:     'rgba(22,0,36,0.9)'
         },
         {
+            // 30 de abril — Día del Niño
+            days: [{m:4, d:30}],
+            name: '¡Feliz Día del Niño!',
+            emoji: '🎈🎉🎊🧸',
+            primary: '#ff9f43',
+            glow:   'rgba(255,150,60,0.42)',
+            border: 'rgba(255,150,60,0.65)',
+            bg:     'rgba(30,10,0,0.92)'
+        },
+        {
+            // 5 de mayo
             days: [{m:5, d:5}],
             name: '¡Viva Puebla! Cinco de Mayo',
             emoji: '🇲🇽🌮🎉',
@@ -1089,6 +1319,7 @@ function applySeasonalTheme() {
             bg:     'rgba(0,28,8,0.9)'
         },
         {
+            // 10 de mayo — Día de las Madres
             days: [{m:5, d:10}],
             name: '¡Feliz Día de las Mamás!',
             emoji: '💐🌷🌸💗',
@@ -1098,6 +1329,7 @@ function applySeasonalTheme() {
             bg:     'rgba(48,0,22,0.9)'
         },
         {
+            // 15 y 16 de septiembre — Independencia
             days: [{m:9, d:15}, {m:9, d:16}],
             name: '¡Viva México!',
             emoji: '🇲🇽🦅🎺🎊',
@@ -1107,7 +1339,8 @@ function applySeasonalTheme() {
             bg:     'rgba(0,28,8,0.95)'
         },
         {
-            days: [{m:10, d:31}, {m:11, d:1}, {m:11, d:2}],
+            // 1 y 2 de noviembre — Día de Muertos
+            days: [{m:11, d:1}, {m:11, d:2}],
             name: 'Día de Muertos',
             emoji: '💀🌼🕯️🦋',
             primary: '#dd44ff',
@@ -1116,6 +1349,17 @@ function applySeasonalTheme() {
             bg:     'rgba(16,0,26,0.95)'
         },
         {
+            // 20 de noviembre — Revolución Mexicana
+            days: [{m:11, d:20}],
+            name: '¡Viva la Revolución Mexicana!',
+            emoji: '🇲🇽🦅🌵🎺',
+            primary: '#00b050',
+            glow:   'rgba(206,17,38,0.38)',
+            border: 'rgba(206,17,38,0.6)',
+            bg:     'rgba(0,28,8,0.92)'
+        },
+        {
+            // 12 de diciembre — Virgen de Guadalupe
             days: [{m:12, d:12}],
             name: 'Día de la Virgen de Guadalupe',
             emoji: '🌹🙏💫⭐',
@@ -1125,15 +1369,27 @@ function applySeasonalTheme() {
             bg:     'rgba(28,5,0,0.95)'
         },
         {
-            days: [{m:12, d:24}, {m:12, d:25}],
+            // 24 de diciembre — Nochebuena
+            days: [{m:12, d:24}],
+            name: '¡Feliz Nochebuena!',
+            emoji: '🎄⭐🌟🎁',
+            primary: '#00cc55',
+            glow:   'rgba(0,200,70,0.42)',
+            border: 'rgba(0,200,70,0.65)',
+            bg:     'rgba(0,22,8,0.95)'
+        },
+        {
+            // 25 de diciembre — Navidad
+            days: [{m:12, d:25}],
             name: '¡Feliz Navidad!',
-            emoji: '🎄🎅⭐🎁',
+            emoji: '🎅🎄🎁⭐',
             primary: '#00cc55',
             glow:   'rgba(0,200,70,0.38)',
             border: 'rgba(0,200,70,0.6)',
             bg:     'rgba(0,22,8,0.95)'
         },
         {
+            // 31 de diciembre — Nochevieja
             days: [{m:12, d:31}],
             name: '¡Feliz Fin de Año!',
             emoji: '🎆🥂✨🎇',

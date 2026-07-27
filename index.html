@@ -28,19 +28,57 @@
                 <span><strong>Mar – Vie</strong> &nbsp;|&nbsp; 8:00 PM – 11:00 PM</span>
             </div>
             <button id="enterMenuBtn" class="btn-enter">Ver el Menú <i class="ph ph-arrow-right"></i></button>
+            <div style="margin-top: 10px;">
+                <button id="shareMenuBtn" class="btn-share-landing"><i class="ph ph-share-network"></i> Compartir Menú con Amigos</button>
+            </div>
         </div>
     </div>
 
     <header class="header">
         <div class="logo">
             <h1>Antojitos Viveros</h1>
-            <p>Menú Digital</p>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                <p style="margin: 0; font-size: 0.78rem;">Menú Digital</p>
+                <span id="businessStatus" class="status-pill"></span>
+            </div>
         </div>
-        <button class="cart-trigger" id="cartTrigger">
-            <i class="ph ph-shopping-cart"></i>
-            <span class="cart-count" id="cartCount">0</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="shareMenuHeaderBtn" class="btn-share-header" title="Recomendar Menú por WhatsApp">
+                <i class="ph ph-share-network"></i>
+            </button>
+            <button class="cart-trigger" id="cartTrigger">
+                <i class="ph ph-shopping-cart"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
     </header>
+
+    <!-- Banner de aviso cuando el negocio cierra un día especial -->
+    <div id="closedDayBanner" class="closed-day-banner" style="display:none;">
+        <i class="ph ph-warning-circle"></i>
+        <span id="closedDayMsg">Hoy no abrimos. ¡Disculpa las molestias! 🙏</span>
+    </div>
+
+    <!-- Panel de Admin (secreto: tocar logo 5 veces) -->
+    <div id="adminPanelOverlay" class="admin-overlay" style="display:none;">
+        <div class="admin-panel">
+            <div class="admin-panel-header">
+                <i class="ph ph-gear-six"></i>
+                <span>Panel de Administrador</span>
+                <button id="closeAdminBtn" class="admin-close-btn"><i class="ph ph-x"></i></button>
+            </div>
+            <p class="admin-date-label" id="adminDateLabel"></p>
+            <div class="admin-section">
+                <p class="admin-section-title">Estado del negocio hoy</p>
+                <button id="toggleClosedBtn" class="admin-toggle-btn"></button>
+            </div>
+            <div class="admin-section">
+                <label class="admin-section-title" for="closedMsgInput">Mensaje para los clientes (opcional)</label>
+                <input id="closedMsgInput" class="admin-msg-input" type="text" placeholder="Ej: Hoy descansamos, ¡volvemos mañana!" maxlength="80" />
+            </div>
+            <p class="admin-hint"><i class="ph ph-lock-simple"></i> Panel secreto — solo visible para el dueño</p>
+        </div>
+    </div>
 
     <main class="container">
         <div class="categories" id="categoriesContainer">
