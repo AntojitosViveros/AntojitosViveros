@@ -6,7 +6,7 @@ const menuData = [
     {
         id: "empanadas",
         name: "Empanadas",
-        description: "Empanadas crujientes (llevan lechuga, crema y queso).",
+        description: "Empanadas crujientes (llevan lechuga, crema y queso rayado).",
         price: 18.00,
         category: "Empanadas",
         image: "empanada.png",
@@ -47,7 +47,7 @@ const menuData = [
     {
         id: "gorditas_picadas",
         name: "Gorditas Picadas",
-        description: "Sencilla: frijol o salsa + cebolla + queso. Regular: lleva además papa.",
+        description: "Sencilla: frijol o salsa + cebolla + queso rayado. Regular: lleva además papa.",
         price: 18.00,
         category: "Gorditas",
         image: "picada.png",
@@ -94,7 +94,7 @@ const menuData = [
     {
         id: "tostadas",
         name: "Tostadas",
-        description: "Con frijol, lechuga, tomate, aguacate, crema y queso.",
+        description: "Con frijol, lechuga, tomate, aguacate, crema y queso rayado.",
         price: 18.00,
         category: "Tostadas",
         image: "tostada.png",
@@ -164,7 +164,7 @@ const menuData = [
     {
         id: "tacos_dorados",
         name: "Orden Tacos Dorados",
-        description: "Orden de 3 tacos dorados crujientes con lechuga, crema y queso.",
+        description: "Orden de 3 tacos dorados crujientes con lechuga, crema y queso rayado.",
         price: 18.00,
         category: "Tacos Dorados",
         image: "Taco dorado.png",
@@ -179,15 +179,15 @@ const menuData = [
     {
         id: "platanos_fritos",
         name: "Plátanos Fritos",
-        description: "Plátanos fritos calientitos. Se sirven con lechera, media crema y queso.",
+        description: "Plátanos fritos calientitos. Se sirven con lechera, media crema y queso rayado.",
         price: 35.00,
         category: "Postres",
         image: "Platano frito.png",
         optionsTitle: "Elige cómo los quieres:",
         options: [
-            { name: "Con lechera, crema y queso", price: 35.00 },
+            { name: "Con lechera, crema y queso rayado", price: 35.00 },
             { name: "Solo lechera", price: 35.00 },
-            { name: "Solo crema y queso", price: 35.00 },
+            { name: "Solo crema y queso rayado", price: 35.00 },
             { name: "Sin acompañamiento", price: 35.00 }
         ],
         exclusions: ["Sin lechera", "Sin media crema", "Sin queso rayado"]
