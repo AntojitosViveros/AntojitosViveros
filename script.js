@@ -1,5 +1,6 @@
 // Datos de ejemplo (Mock Database)
 const WHATSAPP_NUMBER = "522281616533"; // Número de Antojitos Viveros
+const ADMIN_PIN = "1234"; // 🔐 Cambia este PIN para proteger el panel de Administrador
 
 const menuData = [
     {
@@ -208,7 +209,7 @@ const menuData = [
 
 // Estado de la aplicación
 let orderNumber = parseInt(localStorage.getItem('orderNumber')) || 1;
-let cart = [];
+let cart = (() => { try { return JSON.parse(localStorage.getItem('savedCart') || '[]'); } catch(e) { return []; } })();
 let activeCategory = "Todas";
 let productBeingConfigured = null;
 
@@ -304,6 +305,10 @@ function renderMenu() {
         img.alt = item.name;
         img.className = "item-img";
         img.loading = "lazy";
+        img.onerror = function() {
+            this.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='150'><rect width='200' height='150' fill='%23222'/><text x='100' y='85' text-anchor='middle' fill='%23666' font-size='44'>%F0%9F%8D%BD</text></svg>`;
+            this.onerror = null;
+        };
 
         const contentDiv = document.createElement("div");
         contentDiv.className = "item-content";
@@ -781,8 +786,13 @@ function confirmOptionsAndAddToCart() {
     let detailsString = baseDetails.join(', ');
     if (exclusions.length > 0) detailsString += ` (Sin: ${exclusions.join(', ')})`;
 
-    // ID único según configuración
-    const configHash = btoa(encodeURIComponent(detailsString)).substring(0, 15);
+    // ID único según configuración (con protección contra caracteres Unicode)
+    let configHash;
+    try {
+        configHash = btoa(encodeURIComponent(detailsString)).substring(0, 15);
+    } catch (e) {
+        configHash = Date.now().toString(36).substring(0, 15);
+    }
     const cartItemId = `${productBeingConfigured.id}-${configHash}`;
     
     const cartItem = {
@@ -826,6 +836,15 @@ function showToastNotification(message) {
     }, 2800);
 }
 
+// Guardar carrito en localStorage para no perder el pedido al recargar
+function saveCart() {
+    try {
+        localStorage.setItem('savedCart', JSON.stringify(cart));
+    } catch (e) {
+        console.warn('No se pudo guardar el carrito:', e);
+    }
+}
+
 // Lógica del Carrito
 function addToCart(cartItem) {
     const existingItem = cart.find(item => item.id === cartItem.id);
@@ -835,11 +854,13 @@ function addToCart(cartItem) {
         cart.push(cartItem);
     }
     updateCartUI();
+    saveCart();
 }
 
 function removeFromCart(cartItemId) {
     cart = cart.filter(item => item.id !== cartItemId);
     updateCartUI();
+    saveCart();
 }
 
 function changeQuantity(cartItemId, delta) {
@@ -850,6 +871,7 @@ function changeQuantity(cartItemId, delta) {
             removeFromCart(cartItemId);
         } else {
             updateCartUI();
+            saveCart();
         }
     }
 }
@@ -873,6 +895,10 @@ function updateCartUI() {
             img.src = item.image;
             img.className = "cart-item-img";
             img.alt = item.name;
+            img.onerror = function() {
+                this.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><rect width='60' height='60' fill='%23222'/><text x='30' y='38' text-anchor='middle' fill='%23666' font-size='24'>%F0%9F%8D%BD</text></svg>`;
+                this.onerror = null;
+            };
 
             const infoDiv = document.createElement("div");
             infoDiv.className = "cart-item-info";
@@ -941,7 +967,7 @@ function generateWhatsAppLink() {
     const paymentMethod = paymentMethodInput.value;
     const cashAmount = cashAmountInput ? cashAmountInput.value.trim() : '';
 
-    let message = `🧾 *NUEVO PEDIDO*\n`;
+    let message = `🧾 *NUEVO PEDIDO #${orderNumber}*\n`;
     if (name) message += `👤 *Cliente:* ${name}\n`;
     message += `💳 *Pago:* ${paymentMethod === 'efectivo' ? `💵 Efectivo${cashAmount ? ` (Paga con: $${cashAmount})` : ''}` : '🏦 Transferencia'}\n`;
     message += `\n🛒 *DETALLE:*\n`;
@@ -994,8 +1020,13 @@ function generateWhatsAppLink() {
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 
+    // 🌟 Incrementar número de pedido
+    orderNumber++;
+    localStorage.setItem('orderNumber', orderNumber);
+
     // 🌟 Limpiar carrito y campos automáticamente después de enviar
     cart = [];
+    saveCart();
     updateCartUI();
     if (customerNameInput) customerNameInput.value = '';
     if (cashAmountInput) cashAmountInput.value = '';
@@ -1049,6 +1080,16 @@ function setupEventListeners() {
             customerNameInput.focus();
             return;
         }
+        // Validar que el monto en efectivo sea suficiente
+        if (paymentMethodInput.value === 'efectivo' && cashAmountInput && cashAmountInput.value.trim() !== '') {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const cash = parseFloat(cashAmountInput.value);
+            if (isNaN(cash) || cash < total) {
+                alert(`⚠️ El monto ingresado ($${!isNaN(cash) ? cash.toFixed(2) : '0.00'}) es menor al total del pedido ($${total.toFixed(2)}).\nPor favor ingresa un monto igual o mayor al total.`);
+                cashAmountInput.focus();
+                return;
+            }
+        }
         generateWhatsAppLink();
     });
 
@@ -1099,7 +1140,9 @@ function updateBusinessStatus() {
 
 // Recomendar menú por WhatsApp
 function shareMenu() {
-    const text = "¡Hola! Te recomiendo los antojitos de *Antojitos Viveros* 🌮🤤. Tienen empanadas, tacos, picadas y más. Revisa su menú digital aquí:\n" + window.location.href;
+    const isLocalFile = window.location.protocol === 'file:';
+    const menuUrl = isLocalFile ? '' : `\nMenú en línea: ${window.location.href}`;
+    const text = `¡Hola! Te recomiendo los antojitos de *Antojitos Viveros* 🌮🤤. Tienen empanadas, tacos, picadas y más. ¡Pide tu antojo por WhatsApp!${menuUrl}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, '_blank');
 }
@@ -1223,6 +1266,13 @@ function setupAdminPanel() {
 
 function openAdminPanel() {
     if (!adminPanelOverlay) return;
+    // 🔐 Verificar PIN antes de mostrar el panel
+    const pin = prompt('🔐 Ingresa el PIN de administrador:');
+    if (pin === null) return; // El usuario canceló
+    if (pin !== ADMIN_PIN) {
+        alert('❌ PIN incorrecto. Acceso denegado.');
+        return;
+    }
     const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     const now = new Date();
