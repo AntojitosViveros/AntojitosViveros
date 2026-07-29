@@ -95,15 +95,15 @@ const menuData = [
         id: "tostadas",
         name: "Tostadas",
         description: "Con frijol, lechuga, tomate, aguacate, crema y queso rayado.",
-        price: 18.00,
+        price: 20.00,
         category: "Tostadas",
         image: "tostada.png",
         optionsTitle: "Elige tu ingrediente principal:",
         options: [
-            { name: "Pollo hervido", price: 18.00 },
-            { name: "Pollo guisado", price: 18.00 },
-            { name: "Queso de hebra", price: 18.00 },
-            { name: "Picadillo de res", price: 18.00 }
+            { name: "Pollo hervido", price: 20.00 },
+            { name: "Pollo guisado", price: 20.00 },
+            { name: "Queso de hebra", price: 20.00 },
+            { name: "Picadillo de res", price: 20.00 }
         ],
         exclusions: ["Sin lechuga", "Sin tomate", "Sin aguacate", "Sin crema", "Sin queso rayado"]
     },
